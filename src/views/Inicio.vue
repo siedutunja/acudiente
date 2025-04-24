@@ -41,7 +41,7 @@
                   <b-form-invalid-feedback id="feedTextoB" >Campo requerido.</b-form-invalid-feedback>
                 </b-form-group>
                 <p>
-                  Digite el número de documento sin puntos ni comas.
+                  Realice la consulta digitando el número de documento sin puntos ni comas.
                 </p>
               </b-col>
               <b-col lg="6" md="6">
@@ -80,20 +80,27 @@
     data () {
       return {
         idInstitucion: '17ee4f30-fc80-11ec-a1d1-1dc2835404e5', // ENSLAP
+        //idInstitucion: '7c63ed50-fcb0-11ec-8267-536b07c743c4', // SANTIAGO
+        //idInstitucion: 'acaa36d0-fcb1-11ec-8267-536b07c743c4', // EMILIANI
         vigencia: '2025',
         periodo: 'PRIMERO',
         idPeriodo: 1,
         nombreInstitucion: 'ESCUELA NORMAL SUPERIOR LEONOR ALVAREZ PINZÓN',
+        //nombreInstitucion: 'ESCUELA NORMAL SUPERIOR SANTIAGO DE TUNJA',
+        //nombreInstitucion: 'INSTITUCIÓN EDUCATIVA SAN JERÓNIMO EMILIANI',
         escudoInstitucion: 'escudo-enslap.png',
+        //escudoInstitucion: 'escudo-ensst.png',
+        //escudoInstitucion: 'escudo-emiliani.png',
         daneInstitucion: '115001002017',
-
+        //daneInstitucion: '115001000430',
+        //daneInstitucion: '315001001613',
         datosEstudiante: {},
         buscarTexto: {
           textoBusqueda: null,
         },
         alcaldia: null,
         secretaria: null,
-        encontrado: false
+        encontrado: false,
       }
     },
     validations: {
@@ -105,12 +112,13 @@
       async imprimirReportes() {
         let listaReportes = []
         let puesto = ''
-        listaReportes.push({ 'id': this.datosEstudiante.idMatricula, 'estudiante': this.datosEstudiante.estudiante })
-        let uri = "?datos=" + JSON.stringify(listaReportes) + "&ie=" + this.nombreInstitucion + "&vigencia=" + this.vigencia + "&escudo=" + this.escudoInstitucion + "&sede=" + this.datosEstudiante.sede + "&idCurso=" + this.datosEstudiante.id_curso + "&curso=" + this.datosEstudiante.nomenclatura + "&jornada=" + this.datosEstudiante.jornada + "&director=" + this.datosEstudiante.director + "&periodo=" + this.periodo + "&idPeriodo=" + this.idPeriodo + "&idIe=" + this.idInstitucion + "&idNivel=" + this.datosEstudiante.id_nivel + "&puesto=" + puesto
+        listaReportes.push({ 'id': this.datosEstudiante.idMatricula, 'estudiante': this.datosEstudiante.estudiante, 'pue': '', 'pro': '' })
+
+        let uri = "?datos=" + JSON.stringify(listaReportes) + "&ie=" + this.nombreInstitucion + "&vigencia=" + this.vigencia + "&escudo=" + this.escudoInstitucion + "&sede=" + this.datosEstudiante.sede + "&idCurso=" + this.datosEstudiante.id_curso + "&curso=" + this.datosEstudiante.nomenclatura + "&jornada=" + this.datosEstudiante.jornada + "&director=" + this.datosEstudiante.director + "&periodo=" + this.periodo + "&idPeriodo=" + this.idPeriodo + "&idIe=" + this.idInstitucion + "&idNivel=" + this.datosEstudiante.id_nivel + "&puesto=" + puesto +
+        "&minBaj=" + 1 + "&maxBaj=" + 3.4 + "&minBas=" + 3.5 + "&maxBas=" + 3.9 + "&minAlt=" + 4 + "&maxAlt=" + 4.5 + "&minSup=" + 4.6 + "&maxSup=" + 5
         let encoded = encodeURI(uri);
-        //window.open("http://localhost/siedutunja/php/reportes/" + this.$store.state.daneInstitucion + ".php" + encoded,"_blank")
-        window.open("https://siedutunja.gov.co/php/reportes/" + this.daneInstitucion + ".php" + encoded,"_blank")
-        //console.log(JSON.stringify(this.listaReportes))
+        //window.open("http://localhost/siedutunja/php/boletines/" + this.daneInstitucion + "as.php" + encoded,"_blank")
+        window.open("https://siedutunja.gov.co/php/boletines/" + this.daneInstitucion + "as.php" + encoded,"_blank")
         return true
       },
       async buscarEstudiante() {

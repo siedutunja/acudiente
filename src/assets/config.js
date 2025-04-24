@@ -1,10 +1,10 @@
 //*** Api Localhost
-export const ROOT_PATH = "http://localhost:5001/api/"
-export const ROOT_HOME = "http://localhost:8083/acudiente"
+//export const ROOT_PATH = "http://localhost:5001/api/"
+//export const ROOT_HOME = "http://localhost:8082/acudiente"
 
 //*** Api Servidor
-//export const ROOT_PATH = "https://siedutunja.gov.co:3001/api/"
-//export const ROOT_HOME = "https://siedutunja.gov.co/acudiente/"
+export const ROOT_PATH = "https://siedutunja.gov.co:3001/api/"
+export const ROOT_HOME = "https://siedutunja.gov.co/acudiente/"
 
 export const ROOT_REPO = "https://siedutunja.gov.co/api/"
 export const ROOT_ESCUDOS = "https://siedutunja.gov.co/api/colegios/escudos/"

@@ -67,7 +67,7 @@
         .then(response => {
           if (response.data.error){
             alert(response.data.mensaje + ' - Consulta datos Secciones')
-            location.replace(CONFIG.ROOT_MODULO_LOGIN)
+            //location.replace(CONFIG.ROOT_MODULO_LOGIN)
           } else {
             if(response.data.datos != 0) {
               this.$store.commit('set', ['datosSecciones', response.data.datos])
@@ -94,7 +94,7 @@
         .then(response => {
           if (response.data.error){
             alert(response.data.mensaje + ' - Consulta Asignación Docente')
-            location.replace(CONFIG.ROOT_MODULO_LOGIN)
+            //location.replace(CONFIG.ROOT_MODULO_LOGIN)
           } else {
             if(response.data.datos != 0) {
               //console.log(JSON.stringify(response.data.datos))
@@ -115,12 +115,12 @@
         .then(response => {
           if (response.data.error){
             alert(response.data.mensaje + ' - Consulta datos del Usuario de la Sesión')
-            location.replace(CONFIG.ROOT_MODULO_LOGIN)
+            //location.replace(CONFIG.ROOT_MODULO_LOGIN)
           } else{
             //console.log('Sesion: ' + JSON.stringify(response.data.datos))
             if (response.data.datos == 0) {
               alert('¡Lo sentimos!. El Usuario no tiene permisos asignados.')
-              location.replace(CONFIG.ROOT_MODULO_LOGIN)
+              //location.replace(CONFIG.ROOT_MODULO_LOGIN)
             } else {
               // DATOS USUARIO
               this.$store.commit('set', ['documentoUsuario', response.data.datos.usuario.documento])
@@ -192,7 +192,7 @@
         .then(response => {
           if (response.data.error){
             alert(response.data.mensaje + ' - Consulta datos tablas de la Sesión')
-            location.replace(CONFIG.ROOT_MODULO_LOGIN)
+            //location.replace(CONFIG.ROOT_MODULO_LOGIN)
           } else {
             if(response.data.datos != 0) {
               this.$store.commit('set', ['datosTablas', response.data.datos])

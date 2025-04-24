@@ -1,8 +1,8 @@
 module.exports = {
   lintOnSave: false,
   runtimeCompiler: true,
-  publicPath: '/acudiente>/',
-  outputDir: 'acudiente>',
+  publicPath: '/acudiente/',
+  outputDir: 'acudiente',
   configureWebpack: {
     resolve: {
        symlinks: false
