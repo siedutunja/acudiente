@@ -79,19 +79,27 @@
     mixins: [validationMixin],
     data () {
       return {
-        idInstitucion: '17ee4f30-fc80-11ec-a1d1-1dc2835404e5', // ENSLAP
+        idInstitucion: '660fa760-fc83-11ec-a1d1-1dc2835404e5', // GRANCOLOMBIANO
+        //idInstitucion: 'f5529ba0-fcb3-11ec-8267-536b07c743c4', // GUSTAVO ROJAS
+        //idInstitucion: '17ee4f30-fc80-11ec-a1d1-1dc2835404e5', // ENSLAP
         //idInstitucion: '7c63ed50-fcb0-11ec-8267-536b07c743c4', // SANTIAGO
         //idInstitucion: 'acaa36d0-fcb1-11ec-8267-536b07c743c4', // EMILIANI
         vigencia: '2025',
         periodo: 'PRIMERO',
         idPeriodo: 1,
-        nombreInstitucion: 'ESCUELA NORMAL SUPERIOR LEONOR ALVAREZ PINZÓN',
+        nombreInstitucion: 'INSTITUCIÓN EDUCATIVA GIMNASIO GRAN COLOMBIANO',
+        //nombreInstitucion: 'INSTITUCIÓN EDUCATIVA GUSTAVO ROJAS PINILLA',
+        //nombreInstitucion: 'ESCUELA NORMAL SUPERIOR LEONOR ALVAREZ PINZÓN',
         //nombreInstitucion: 'ESCUELA NORMAL SUPERIOR SANTIAGO DE TUNJA',
         //nombreInstitucion: 'INSTITUCIÓN EDUCATIVA SAN JERÓNIMO EMILIANI',
-        escudoInstitucion: 'escudo-enslap.png',
+        escudoInstitucion: 'escudo-gimnasiogc.png',
+        //escudoInstitucion: 'escudo-iegrp.png',
+        //escudoInstitucion: 'escudo-enslap.png',
         //escudoInstitucion: 'escudo-ensst.png',
         //escudoInstitucion: 'escudo-emiliani.png',
-        daneInstitucion: '115001002017',
+        daneInstitucion: '315001000293',
+        //daneInstitucion: '115001002807',
+        //daneInstitucion: '115001002017',
         //daneInstitucion: '115001000430',
         //daneInstitucion: '315001001613',
         datosEstudiante: {},
