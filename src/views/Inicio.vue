@@ -18,7 +18,6 @@
                     <div class="mt-2 text-center">
                       <h6 style="margin-top: -5" class="text-white">{{ alcaldia }}</h6>
                       <h6 style="margin-top: -5" class="text-white">{{ secretaria }}</h6>
-                      <h4 style="margin-top: -5" class="text-white">{{ nombreInstitucion }}</h4>
                       <h6 style="margin-top: -5" class="text-white">TUNJA - BOYACÁ</h6>
                     </div>
                   </CCol>
@@ -30,7 +29,7 @@
                 <h2>Consulta de Informe de Evaluación</h2>
               </b-col>
               <b-col lg="6">
-                <h2>Periodo: PRIMERO</h2>
+                <h2>Periodo: SEGUNDO</h2>
               </b-col>
             </b-row>
             <b-row><b-col><hr></b-col></b-row>
@@ -52,9 +51,9 @@
             <b-row><b-col><hr></b-col></b-row>
             <b-row v-if="encontrado">
               <b-col>
-                <p>Estudiante: <br><b>{{datosEstudiante.estudiante}}</b></p>
+                <p>Estudiante: <br><b>{{datosEstudiante.nombre}}</b></p>
                 <p>Documento: <br><b>{{datosEstudiante.documento}}</b></p>
-                <p>Grado-Curso: <br><b>{{datosEstudiante.nomenclatura}}</b></p>
+                <p>Grado-Curso: <br><b>{{datosEstudiante.curso}}</b></p>
                 <p>Jornada: <br><b>{{datosEstudiante.jornada}}</b></p>
                 <p>Sede: <br><b>{{datosEstudiante.sede}}</b></p>
                 <b-button class="small mt-1" variant="success" @click="imprimirReportes()">Consultar Informe de Evaluación</b-button>
@@ -65,6 +64,66 @@
         </CCard>
       </CCol>
     </CRow>
+
+    <div v-if="idNivel == 1">
+      <BoletinPree
+        v-if="mostrarBoletines"
+        :estudiantesSeleccionados="estudiantesSeleccionados"
+        :listaAreasAsignaturas="listaAreasAsignaturas"
+        :listaDescriptores="listaDescriptores"
+        :notas="notas"
+        :datosEstudiantes="datosEstudiantes"
+        :anio="2025"
+        :periodoActual="idPeriodo"
+        :periodosVisibles="periodosVisibles"
+        :nombreSede="nombreSede"
+        :nombreCurso="nombreCurso"
+        :nombrePeriodo="nombrePeriodo"
+        :nombreJornada="nombreJornada"
+        :nombreDirector="nombreDirector"
+        :idNivel="idNivel"
+        :umbralesA="umbralesA"
+        :umbralesT="umbralesT"
+        :pesosPeriodos="pesosPeriodos"
+        :tipoValComp="tipoValComp"
+        :directorCurso="nombreDirector"
+        :coordinador="coordinador"
+        :promCompor="promCompor"
+        :escalaPreescolar="escalaPreescolar"
+        :nuevaEscalaPreescolar="nuevaEscalaPreescolar"
+        :escudoIE="escudoIE"
+        :nombreIE="nombreIE"
+      />
+    </div>
+    <div v-else>
+      <BoletinPeriodo
+        v-if="mostrarBoletines"
+        :estudiantesSeleccionados="estudiantesSeleccionados"
+        :listaAreasAsignaturas="listaAreasAsignaturas"
+        :listaDescriptores="listaDescriptores"
+        :notas="notas"
+        :datosEstudiantes="datosEstudiantes"
+        :anio="2025"
+        :periodoActual="idPeriodo"
+        :periodosVisibles="periodosVisibles"
+        :nombreSede="nombreSede"
+        :nombreCurso="nombreCurso"
+        :nombrePeriodo="nombrePeriodo"
+        :nombreJornada="nombreJornada"
+        :nombreDirector="nombreDirector"
+        :idNivel="idNivel"
+        :umbralesA="umbralesA"
+        :umbralesT="umbralesT"
+        :pesosPeriodos="pesosPeriodos"
+        :tipoValComp="tipoValComp"
+        :promCompor="promCompor"
+        :letrasCompor="letrasCompor"
+        :directorCurso="nombreDirector"
+        :coordinador="coordinador"
+        :escudoIE="escudoIE"
+        :nombreIE="nombreIE"
+      />
+    </div>
   </div>
 </template>
 
@@ -73,35 +132,52 @@
   import * as CONFIG from '@/assets/config.js'
   import { validationMixin } from "vuelidate";
   import { required, minLength } from "vuelidate/lib/validators";
+  import BoletinPeriodo from '@/views//BoletinPeriodo'
+  import BoletinPree from '@/views/BoletinPree'
 
   export default {
     name: 'Inicio',
     mixins: [validationMixin],
+    components: {
+      BoletinPeriodo,
+      BoletinPree
+    },
     data () {
       return {
-        idInstitucion: '660fa760-fc83-11ec-a1d1-1dc2835404e5', // GRANCOLOMBIANO
-        //idInstitucion: 'f5529ba0-fcb3-11ec-8267-536b07c743c4', // GUSTAVO ROJAS
-        //idInstitucion: '17ee4f30-fc80-11ec-a1d1-1dc2835404e5', // ENSLAP
-        //idInstitucion: '7c63ed50-fcb0-11ec-8267-536b07c743c4', // SANTIAGO
-        //idInstitucion: 'acaa36d0-fcb1-11ec-8267-536b07c743c4', // EMILIANI
-        vigencia: '2025',
-        periodo: 'PRIMERO',
-        idPeriodo: 1,
-        nombreInstitucion: 'INSTITUCIÓN EDUCATIVA GIMNASIO GRAN COLOMBIANO',
-        //nombreInstitucion: 'INSTITUCIÓN EDUCATIVA GUSTAVO ROJAS PINILLA',
-        //nombreInstitucion: 'ESCUELA NORMAL SUPERIOR LEONOR ALVAREZ PINZÓN',
-        //nombreInstitucion: 'ESCUELA NORMAL SUPERIOR SANTIAGO DE TUNJA',
-        //nombreInstitucion: 'INSTITUCIÓN EDUCATIVA SAN JERÓNIMO EMILIANI',
-        escudoInstitucion: 'escudo-gimnasiogc.png',
-        //escudoInstitucion: 'escudo-iegrp.png',
-        //escudoInstitucion: 'escudo-enslap.png',
-        //escudoInstitucion: 'escudo-ensst.png',
-        //escudoInstitucion: 'escudo-emiliani.png',
-        daneInstitucion: '315001000293',
-        //daneInstitucion: '115001002807',
-        //daneInstitucion: '115001002017',
-        //daneInstitucion: '115001000430',
-        //daneInstitucion: '315001001613',
+        idBoletin: null,
+        idSede: null,
+        comboSedes: [],
+        idPeriodo: null,
+        comboPeriodos: null,
+        idCurso: null,
+        comboCursosSede: [],
+        nombreSede: null,
+        nombreCurso: null,
+        nombrePeriodo: null,
+        nombreJornada: null,
+        nombreDirector: null,
+        coordinador: null,
+        idNivel: null,
+        btnCargando: false,
+        datosSeccion: {},
+        estudiantesSeleccionados: [],
+        datosEstudiantes: [],
+        listaAreasAsignaturas: [],
+        listaDescriptores: [],
+        notas: [],
+        periodosVisibles: [],
+        mostrarBoletines: false,
+        umbralesA: [],
+        umbralesT: [],
+        pesosPeriodos: [],
+        tipoValComp: null,
+        promCompor: null,
+        firma2: null,
+        escalaPreescolar: {},
+        nuevaEscalaPreescolar: [],
+        letrasCompor: [],
+
+        listaReportes: [],
         datosEstudiante: {},
         buscarTexto: {
           textoBusqueda: null,
@@ -109,6 +185,8 @@
         alcaldia: null,
         secretaria: null,
         encontrado: false,
+        escudoIE: '',
+        nombreIE: '',
       }
     },
     validations: {
@@ -118,16 +196,145 @@
     },
     methods: {
       async imprimirReportes() {
-        let listaReportes = []
+        this.btnCargando = true
+        this.listaReportes = []
         let puesto = ''
-        listaReportes.push({ 'id': this.datosEstudiante.idMatricula, 'estudiante': this.datosEstudiante.estudiante, 'pue': '', 'pro': '' })
-
-        let uri = "?datos=" + JSON.stringify(listaReportes) + "&ie=" + this.nombreInstitucion + "&vigencia=" + this.vigencia + "&escudo=" + this.escudoInstitucion + "&sede=" + this.datosEstudiante.sede + "&idCurso=" + this.datosEstudiante.id_curso + "&curso=" + this.datosEstudiante.nomenclatura + "&jornada=" + this.datosEstudiante.jornada + "&director=" + this.datosEstudiante.director + "&periodo=" + this.periodo + "&idPeriodo=" + this.idPeriodo + "&idIe=" + this.idInstitucion + "&idNivel=" + this.datosEstudiante.id_nivel + "&puesto=" + puesto +
-        "&minBaj=" + 1 + "&maxBaj=" + 3.4 + "&minBas=" + 3.5 + "&maxBas=" + 3.9 + "&minAlt=" + 4 + "&maxAlt=" + 4.5 + "&minSup=" + 4.6 + "&maxSup=" + 5
-        let encoded = encodeURI(uri);
-        //window.open("http://localhost/siedutunja/php/boletines/" + this.daneInstitucion + "as.php" + encoded,"_blank")
-        window.open("https://siedutunja.gov.co/php/boletines/" + this.daneInstitucion + "as.php" + encoded,"_blank")
-        return true
+        if (this.idNivel == 99) {
+          this.listaReportes = []
+          this.listaReportes.push({ 'id': this.datosEstudiante.idMatricula, 'estudiante': this.datosEstudiante.nombre, 'pue': '', 'pro': '' })
+          let uri = "?datos=" + JSON.stringify(this.listaReportes) + "&ie=" + this.datosEstudiante.institucion + "&vigencia=" + "2025" + "&escudo=" + this.datosEstudiante.escudo + "&sede=" + this.datosEstudiante.sede + "&idCurso=" + this.datosEstudiante.idCurso + "&curso=" + this.datosEstudiante.curso + "&jornada=" + this.datosEstudiante.jornada + "&director=" + this.datosEstudiante.director + "&periodo=" + "SEGUNDO" + "&idPeriodo=" + this.idPeriodo + "&idIe=" + this.datosEstudiante.idInstitucion + "&idNivel=" + this.datosEstudiante.idNivel + "&puesto=" + "" +
+          "&minBaj=" + this.datosEstudiante.minBaj + "&maxBaj=" + this.datosEstudiante.maxBaj + "&minBas=" + this.datosEstudiante.minBas + "&maxBas=" + this.datosEstudiante.maxBas + "&minAlt=" + this.datosEstudiante.minAlt + "&maxAlt=" + this.datosEstudiante.maxAlt + "&minSup=" + this.datosEstudiante.minSup + "&maxSup=" + this.datosEstudiante.maxSup
+          let encoded = encodeURI(uri);
+          //window.open("http://localhost/siedutunja/php/boletines/" + this.datosEstudiante.dane + "as.php" + encoded,"_blank")
+          window.open("https://siedutunja.gov.co/php/boletines/" + this.datosEstudiante.dane + "as.php" + encoded,"_blank")
+        } else {
+          this.btnCargando = true
+          this.mostrarBoletines = true
+          this.listaReportes.push({ 'idMatricula': this.datosEstudiante.idMatricula, 'nombre': this.datosEstudiante.nombre })
+          this.estudiantesSeleccionados = this.listaReportes
+          if (this.idPeriodo == 1) this.periodosVisibles = [1]
+          if (this.idPeriodo == 2) this.periodosVisibles = [1,2]
+          if (this.idPeriodo == 3) this.periodosVisibles = [1,2,3]
+          if (this.idPeriodo == 4) this.periodosVisibles = [1,2,3,4]
+          this.umbralesA = [this.datosEstudiante.minBas,this.datosEstudiante.minAlt,this.datosEstudiante.minSup,this.datosEstudiante.maxSup]
+          this.umbralesT = [this.datosEstudiante.minBasT,this.datosEstudiante.minAltT,this.datosEstudiante.minSupT,this.datosEstudiante.maxSupT]
+          this.pesosPeriodos = [this.datosEstudiante.pesoP1,this.datosEstudiante.pesoP2,this.datosEstudiante.pesoP3,this.datosEstudiante.pesoP4]
+          this.tipoValComp = this.datosEstudiante.tipoValComp
+          this.promCompor = this.datosEstudiante.promCompor
+          this.escalaPreescolar = {I: this.datosEstudiante.minBaj, B: this.datosEstudiante.minBas, A: this.datosEstudiante.minAlt, S: this.datosEstudiante.maxSup}
+          this.nuevaEscalaPreescolar = [
+            {letra: this.datosEstudiante.preeL1, umbral: this.datosEstudiante.minBaj, desempeno: this.datosEstudiante.preeC1},
+            {letra: this.datosEstudiante.preeL2, umbral: this.datosEstudiante.minBas, desempeno: this.datosEstudiante.preeC2},
+            {letra: this.datosEstudiante.preeL3, umbral: this.datosEstudiante.minAlt, desempeno: this.datosEstudiante.preeC3},
+            {letra: this.datosEstudiante.preeL4, umbral: this.datosEstudiante.maxSup, desempeno: this.datosEstudiante.preeC4},
+          ]
+          this.letrasCompor = [this.datosEstudiante.compL1,this.datosEstudiante.compL2,this.datosEstudiante.compL3,this.datosEstudiante.compL4]
+          //console.log(this.estudiantesSeleccionados)
+          // this.firma2 =  Asignar la firma que va en el boletin
+          setTimeout(()=>{
+            this.btnCargando = false
+          },500)
+        }
+      },
+      async consultarEstudiantes() { 
+        this.btnCargando = true
+        this.mostrarBoletines = false
+        if (this.idCurso != null) { 
+          this.nombreJornada = this.datosEstudiante.jornada
+          this.nombreDirector = this.datosEstudiante.director
+          this.idNivel = this.datosEstudiante.idNivel
+          if (this.idNivel == 1 && (this.datosEstudiante.idInstitucion == '17ee4f30-fc80-11ec-a1d1-1dc2835404e5' || this.datosEstudiante.idInstitucion == '097b7b10-fcaa-11ec-8267-536b07c743c4')) {
+            this.idNivel = 99
+          }
+          this.nombreSede = this.datosEstudiante.sede
+          this.nombreCurso = this.datosEstudiante.curso
+          this.nombrePeriodo = "SEGUNDO"
+          this.datosEstudiantes = []
+          await axios
+          .get(CONFIG.ROOT_PATH + 'boletines/listacurso/boletines', { params: { idCurso: this.idCurso }})
+          .then(response => {
+            if (response.data.error){
+              this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta Lista Curso')
+              this.btnCargando = false
+            } else{
+              if (response.data.datos != 0) {
+                this.datosEstudiantes = response.data.datos
+                //console.log(JSON.stringify(this.datosEstudiantes))
+                if (this.idNivel !== 99 ) {
+                  this.consultarNotas()
+                  this.consultarAreasAsignaturas()
+                  this.consultarDescriptores()
+                }
+              }
+            }
+          })
+          .catch(err => {
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Lista Curso. Intente más tarde.' + err)
+            this.btnCargando = false
+          })
+        }
+        //console.log(JSON.stringify(this.datosEstudiantes))
+        this.btnCargando = false
+      },
+      async consultarNotas() {
+        this.notas = []
+        await axios
+        .get(CONFIG.ROOT_PATH + 'boletines/notas/curso/periodo', {params: {idCurso: this.idCurso, periodo: this.idPeriodo}})
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Notas boletines curso periodo')
+            this.btnCargando = false
+          } else{
+            if (response.data.datos != 0) {
+              this.notas = response.data.datos
+              //console.log(JSON.stringify(this.notas))
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Notas boletines curso periodo. Intente más tarde.' + err)
+          this.btnCargando = false
+        })
+      },
+      async consultarAreasAsignaturas() {
+        this.listaAreasAsignaturas = []
+        await axios
+        .get(CONFIG.ROOT_PATH + 'boletines/areasasignaturas/curso', {params: {idCurso: this.idCurso}})
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Lista areas-asignaturas curso')
+            this.btnCargando = false
+          } else{
+            if (response.data.datos != 0) {
+              this.listaAreasAsignaturas = response.data.datos
+              //console.log(JSON.stringify(this.listaAreasAsignaturas))
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Lista areas-asignaturas curso. Intente más tarde.' + err)
+          this.btnCargando = false
+        })
+      },
+      async consultarDescriptores() {
+        this.listaDescriptores = []
+        await axios
+        .get(CONFIG.ROOT_PATH + 'boletines/descriptores/curso', {params: {idCurso: this.idCurso, periodo: this.idPeriodo}})
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Lista descriptores curso')
+            this.btnCargando = false
+          } else{
+            if (response.data.datos != 0) {
+              this.listaDescriptores = response.data.datos
+              //console.log(JSON.stringify(this.listaDescriptores))
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Lista descriptores curso. Intente más tarde.' + err)
+          this.btnCargando = false
+        })
       },
       async buscarEstudiante() {
         this.datosEstudiante = {}
@@ -139,7 +346,7 @@
           return false
         } else {
           await axios
-          .get(CONFIG.ROOT_PATH + 'academico/buscarestudiante/documento/reporte', { params: { texto: this.buscarTexto.textoBusqueda, idInstitucion: this.idInstitucion, vigencia: this.vigencia }})
+          .get(CONFIG.ROOT_PATH + 'academico/buscarestudiante/documento/reporte', { params: { texto: this.buscarTexto.textoBusqueda }})
           .then(response => {
             if (response.data.error){
               this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consultar estudiante')
@@ -147,7 +354,11 @@
               if (response.data.datos != 0) {
                 this.datosEstudiante = response.data.datos
                 this.encontrado = true
-                //console.log(JSON.stringify(response.data.datos))
+                this.idCurso = this.datosEstudiante.idCurso
+                this.escudoIE = this.datosEstudiante.escudo
+                this.nombreIE = this.datosEstudiante.institucion
+                this.consultarEstudiantes()
+                //console.log(JSON.stringify(this.datosEstudiante))
               } else {
                 this.mensajeEmergente('info',CONFIG.TITULO_MSG,'No se encontraron datos en la consulta.')
               }
@@ -171,6 +382,7 @@
       //this.escudoInstitucion = CONFIG.ROOT_ESCUDOS + this.$store.state.escudoInstitucion
       this.secretaria = CONFIG.SECRETARIA
       this.alcaldia = CONFIG.ALCALDIA
+      this.idPeriodo = 2
     }
   }
 </script>
