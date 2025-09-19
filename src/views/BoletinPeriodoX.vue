@@ -28,20 +28,17 @@ export default {
     tipoValComp: Number,
     promCompor: Number,
     letrasCompor: Array,
-    firmasBoletin: String,
-    descC1: String,
-    descC2: String,
-    descC3: String,
+    directorCurso: String,
+    coordinador: String,
+    escudoIE: String,
+    nombreIE: String,
   },
   data () {
     return {
       escudo: null,
       asignatur: null,
       orden: 0,
-      conceptual: null,
-      datosSeccion: {},
-      colDesem: 0,
-      escala: 0,
+      colDesem: 0
     }
   },
   methods: {
@@ -89,10 +86,26 @@ export default {
     },
     renderBoletin(estudiante, data) {
       if (!data) return `<p>No hay datos para ${estudiante.nombre}</p>`
-      let cuerpo = `
+      /*
+      const firmas = `
+          <table class="firmas" style="width: 100%;">
+            <tr>
+              <td style="width: 50%;">
+                <p>________________________________________<br>${this.directorCurso}<br>Firma Director(a) de Curso</p>
+              </td>
+              <!--
+              <td style="width: 50%;">
+                <p>________________________________________<br>${this.coordinador}<br>Firma Coordinador(a)</p>
+              </td>
+              -->
+            </tr>
+          </table>
+      `
+      */
+      return `
         <div class="boletin">
           <div class="text-center mt-2">
-            <p style="text-align: center; font-size: 14px;">SECRETARÍA DE EDUCACIÓN TERRITORIAL DE TUNJA<br><b>${this.$store.state.nombreInstitucion}</b><br>TUNJA - BOYACÁ<br>BOLETIN DE EVALUACIONES POR PERIODO</p>
+            <p style="text-align: center; font-size: 14px;">SECRETARÍA DE EDUCACIÓN TERRITORIAL DE TUNJA<br><b>${this.nombreIE}</b><br>TUNJA - BOYACÁ<br>BOLETIN DE EVALUACIONES POR PERIODO</p>
           </div>
           <div class="float-left" style="margin-top: -80px;">
               <img src="${this.escudo}" width="70px"></img>
@@ -118,33 +131,17 @@ export default {
                 <th rowspan="2">Área / Asignatura</th>
                 <th rowspan="2">IH</th>
                 <th colspan="${this.periodosVisibles.length + 1}">Historial</th>
-                <th colspan="${this.colDesem}">Desempeño en el Periodo</th>
+                <th colspan="6">Desempeño en el Periodo</th>
               </tr>
               <tr>
                 ${this.periodosVisibles.map(p => `<th>P${p}</th>`).join('')}
                 <th>PR</th>
-        `
-        if (this.colDesem == 7) {
-          cuerpo += `
-                  <th>${this.descC1}</th>
-                  <th>${this.descC2}</th>
-                  <th>${this.descC3}</th>
-                  <th>Def</th>
-                  <th>Desemp</th>
-                  <th>AJ</th>
-                  <th>AS</th>
-          `
-        } else {
-          cuerpo += `
-                  <th>EvP</th>
-                  <th>Rec</th>
-                  <th>Def</th>
-                  <th>Desemp</th>
-                  <th>AJ</th>
-                  <th>AS</th>
-          `
-        }
-        cuerpo += `
+                <th>EvP</th>
+                <th>Rec</th>
+                <th>Def</th>
+                <th>Desemp</th>
+                <th>AJ</th>
+                <th>AS</th>
               </tr>
             </thead>
             <tbody>
@@ -161,11 +158,6 @@ export default {
               </tr>
             </thead>
           </table>
-          <table class="tabla-boletin">
-            <tr>
-              <th>Desempeños: BAJO [${(this.datosSeccion.minBaj).toFixed(1)} : ${(this.datosSeccion.maxBaj).toFixed(1)}] | BÁSICO [${(this.datosSeccion.minBas).toFixed(1)} : ${(this.datosSeccion.maxBas).toFixed(1)}] | ALTO [${(this.datosSeccion.minAlt).toFixed(1)} : ${(this.datosSeccion.maxAlt).toFixed(1)}] | SUPERIOR [${(this.datosSeccion.minSup).toFixed(1)} : ${(this.datosSeccion.maxSup).toFixed(1)}]</th>
-            </tr>
-          </table>
           <table class="tabla-boletin observacion-comportamiento">
             <thead>
               <tr>
@@ -173,8 +165,19 @@ export default {
               </tr>
             </thead>
           </table>
-        `
-      return cuerpo + this.firmasBoletin
+          <table class="firmas" style="width: 100%;">
+            <tr>
+              <td style="width: 50%;">
+                <p>________________________________________<br>${this.directorCurso}<br>Firma Director(a) de Curso</p>
+              </td>
+              <!--
+              <td style="width: 50%;">
+                <p>________________________________________<br>${this.coordinador}<br>Firma Coordinador(a)</p>
+              </td>
+              -->
+            </tr>
+          </table>
+      ` // + firmas
     },
     renderCuerpoTabla(estudiante, data) {
       const areas = [...new Set(this.listaAreasAsignaturas.map(a => a.area))]
@@ -188,94 +191,54 @@ export default {
           const nombreAsignatura = asig.nombreAsignatura
           const ih = this.orden !== 98 ? asig.ih : ''
           const notas = this.periodosVisibles.map(p => `<td>${this.orden !== 98 ? this.notaPeriodo(data, area, a, p) : ''}</td>`).join('')
-          const c1 = this.orden == 98 ? '' : this.criterio1Periodo(data, area, a, this.periodoActual) > 0 ? this.criterio1Periodo(data, area, a, this.periodoActual) : ''
-          const c2 = this.orden == 98 ? '' : this.criterio2Periodo(data, area, a, this.periodoActual) > 0 ? this.criterio2Periodo(data, area, a, this.periodoActual) : ''
-          const c3 = this.orden == 98 ? '' : this.criterio3Periodo(data, area, a, this.periodoActual) > 0 ? this.criterio3Periodo(data, area, a, this.periodoActual) : ''
           const prom = this.orden !== 98 ? this.promedioAsignatura(data, area, a) : ''
           const def = this.orden !== 98 ? this.definitivaPeriodo(data, area, a, this.periodoActual) : ''
           const rec = this.orden !== 98 ? this.recuperacion(data, area, a, this.periodoActual) : ''
           const final = this.orden !== 98 ? this.notaFinal(data, area, a, this.periodoActual) : ''
           const des = this.orden !== 98 ? this.desempeno(final, area, a) : '' //this.desempeño(final)
-          const ausJ = this.ausencias(data, area, a, 'ausJ')
-          const ausS = this.ausencias(data, area, a, 'ausS')
-          const ausJAsig = this.orden == 98 ? '' : ausJ > 0 ? ausJ : ''
-          const ausSAsig = this.orden == 98 ? '' : ausS > 0 ? ausS : ''
+          const ausJ = this.orden !== 98 ? this.ausencias(data, area, a, 'ausJ') : ''
+          const ausS = this.orden !== 98 ? this.ausencias(data, area, a, 'ausS') : ''
           const docente = asig.docente != null ? asig.docente : ''
-          if (this.colDesem == 7) {
-            return `
-              <tr>
-                <td style="text-align: left"><strong>${nombreAsignatura}</strong> <br> <i style="font-size: 10px;">${docente}</i></td>
-                <td>${ih}</td>
-                ${notas}
-                <td>${prom}</td>
-                <td>${c1}</td>
-                <td>${c2}</td>
-                <td>${c3}</td>
-                <td>${final > 0 ? final : final}</td>
-                <td>${des}</td>
-                <td>${ausJAsig}</td>
-                <td>${ausSAsig}</td>
-              </tr>
-              <tr><td colspan="11" class="descriptor" style="text-align: left">${this.descriptorAsignatura(data, area, a, this.periodoActual,this.orden)}</td></tr>
-            `
-          } else {
-            return `
-              <tr>
-                <td style="text-align: left"><strong>${nombreAsignatura}</strong> <br> <i style="font-size: 10px;">${docente}</i></td>
-                <td>${ih}</td>
-                ${notas}
-                <td>${prom}</td>
-                <td>${def}</td>
-                <td>${rec}</td>
-                <td>${final > 0 ? final : final}</td>
-                <td>${des}</td>
-                <td>${ausJAsig}</td>
-                <td>${ausSAsig}</td>
-              </tr>
-              <tr><td colspan="${this.colDesem + 6}" class="descriptor" style="text-align: left">${this.descriptorAsignatura(data, area, a, this.periodoActual,this.orden)}</td></tr>
-            `
-          }
+
+          return `
+            <tr>
+              <td style="text-align: left"><strong>${nombreAsignatura}</strong> <br> <i style="font-size: 10px;">${docente}</i></td>
+              <td>${ih}</td>
+              ${notas}
+              <td>${prom}</td>
+              <td>${def}</td>
+              <td>${rec}</td>
+              <td>${final > 0 ? final : final}</td>
+              <td>${des}</td>
+              <td>${ausJ}</td>
+              <td>${ausS}</td>
+            </tr>
+            <tr><td colspan="11" class="descriptor" style="text-align: left">${this.descriptorAsignatura(data, area, a, this.periodoActual)}</td></tr>
+          `
         }).join('')
-        const ausJ = this.ausenciasArea(data, area, 'ausJ')
-        const ausS = this.ausenciasArea(data, area, 'ausS')
+
         const notasArea = this.periodosVisibles.map(p => `<td>${this.orden !== 98 ? this.promedioAreaPorPeriodo(data, area, p) : ''}</td>`).join('')
         const promArea = this.orden !== 98 ? this.promedioArea(data, area) : ''
         const finalArea = this.orden !== 98 && this.orden != 99 ? this.notaFinalArea(data, area) : this.orden === 99 ? this.definitivaPeriodo(data, area, this.asignatur, this.periodoActual) : ''
         const desArea = this.orden !== 98 ? this.desempeno(finalArea, area, this.asignatur) : '' //this.desempeño(finalArea)
-        const ausJArea = this.orden == 98 ? '' : ausJ > 0 ? ausJ : ''
-        const ausSArea = this.orden == 98 ? '' : ausS > 0 ? ausS : ''
+        const ausJArea = this.orden !== 98 ? this.ausenciasArea(data, area, 'ausJ') : ''
+        const ausSArea = this.orden !== 98 ? this.ausenciasArea(data, area, 'ausS') : ''
         const ihArea = this.orden !== 98 ? this.intensidadHorariaArea(data, area) : ''
-        if (this.colDesem == 7) {
-          return `
-            <tr class="fila-area">
-              <td style="text-align: left"><strong>${this.nombreDelArea(area)}</strong></td>
-              <td>${ihArea}</td>
-              ${notasArea}
-              <td>${promArea}</td>
-              <td></td><td></td><td></td>
-              <td>${finalArea > 0 ? finalArea : finalArea}</td>
-              <td>${desArea}</td>
-              <td>${ausJArea}</td>
-              <td>${ausSArea}</td>
-            </tr>
-            ${filasAsignaturas}
-          `
-        } else {
-          return `
-            <tr class="fila-area">
-              <td style="text-align: left"><strong>${this.nombreDelArea(area)}</strong></td>
-              <td>${ihArea}</td>
-              ${notasArea}
-              <td>${promArea}</td>
-              <td></td><td></td>
-              <td>${finalArea > 0 ? finalArea : finalArea}</td>
-              <td>${desArea}</td>
-              <td>${ausJArea}</td>
-              <td>${ausSArea}</td>
-            </tr>
-            ${filasAsignaturas}
-          `
-        }
+
+        return `
+          <tr class="fila-area">
+            <td style="text-align: left"><strong>${this.nombreDelArea(area)}</strong></td>
+            <td>${ihArea}</td>
+            ${notasArea}
+            <td>${promArea}</td>
+            <td></td><td></td>
+            <td>${finalArea > 0 ? finalArea : finalArea}</td>
+            <td>${desArea}</td>
+            <td>${ausJArea}</td>
+            <td>${ausSArea}</td>
+          </tr>
+          ${filasAsignaturas}
+        `
       }).join('')
     },
     estilosBoletin() {
@@ -296,25 +259,29 @@ export default {
         }
       `
     },
-    descriptorAsignatura(est, area, asignatura, periodo, ordencito) {
+    descriptorAsignatura(est, area, asignatura, periodo) {
       const datos = est.areas?.[area]?.asignaturas?.[asignatura]
       const meta = this.listaAreasAsignaturas.find(
         a => a.area === area && a.asignatura === asignatura
       )
+
       if (!datos || !meta) return ''
+
       // Si la asignatura tiene pd === "S", usamos el campo inclusion directamente
-      if (datos.pd === 'S' || datos.concep === 'S' ) {
+      if (datos.pd === 'S') {
         return datos.inclusion || ''
       }
-      let notaFinal = 0
-      if (ordencito === 99 && this.tipoValComp == 0) {
-        notaFinal = parseFloat(this.notaFinal(est, area, asignatura, periodo))
-        notaFinal = this.escala
-      } else {
-        // Obtener la nota final del estudiante
-        notaFinal = parseFloat(this.notaFinal(est, area, asignatura, periodo))
-      }
-      //console.log(notaFinal)
+
+
+      /*
+      // Buscar metadatos de la asignatura
+      const meta = this.listaAreasAsignaturas.find(
+        a => a.area === area && a.asignatura === asignatura
+      )
+      if (!meta) return ''
+      */
+      // Obtener la nota final del estudiante
+      const notaFinal = parseFloat(this.notaFinal(est, area, asignatura, periodo))
       if (isNaN(notaFinal)) return ''
       // Determinar desempeño real
       const tipo = meta.idTipoEspecialidad
@@ -434,20 +401,12 @@ export default {
       return encontrado?.puesto || ''
     },
     definitivaPeriodo(est, area, asignatura, periodo) {
-      const concep = est.areas?.[area]?.asignaturas?.[asignatura]?.concep
-      if (concep === "S") return ''
       const orden = est.areas?.[area]?.asignaturas?.[asignatura]?.orden
       const nota = est.areas?.[area]?.asignaturas?.[asignatura]?.definitivas?.[periodo]
-      if (orden == 99 && this.tipoValComp == 0) {
-        this.escala = this.letrasCompor.findIndex(valor => valor === nota)
-        if (this.escala == 1) this.escala = 3
-        else if (this.escala == 2) this.escala = 4
-        else if (this.escala == 3) this.escala = 5
-        else this.escala = 2
+      if (orden == 99 && this.tipoValComp == 0)
         return nota
-      } else {
+      else
         return typeof nota === 'number' && nota > 0 ? nota.toFixed(1) : ''
-      }
     },
     recuperacion(est, area, asignatura, periodo) {
       const rec = est.areas?.[area]?.asignaturas?.[asignatura]?.recuperaciones?.[periodo]
@@ -464,8 +423,6 @@ export default {
       return def > 0 ? def.toFixed(1) : def
     },
     promedioAsignatura(est, area, asignatura) {
-      const concep = est.areas?.[area]?.asignaturas?.[asignatura]?.concep
-      if (concep === "S") return ''
       const orden = est.areas?.[area]?.asignaturas?.[asignatura]?.orden
       const asig = est.areas?.[area]?.asignaturas?.[asignatura]
       if (!asig) return ''
@@ -527,8 +484,6 @@ export default {
     promedioAreaPorPeriodo(est, area, periodo) {
       const asigns = Object.keys(est.areas?.[area]?.asignaturas || {})
       if (!asigns.length) return ''
-      const concep = est.areas?.[area]?.asignaturas?.[asigns]?.concep
-      if (concep === "S") return ''
       const orden = est.areas?.[area]?.asignaturas?.[asigns]?.orden
       if (orden == 99 && this.tipoValComp == 0) return est.areas?.[area]?.asignaturas?.[asigns]?.periodos?.[periodo] || ''
       const total = asigns.reduce((sum, asig) => {
@@ -539,11 +494,11 @@ export default {
       // return this.redondear(total / asigns.length).toFixed(1)
     },
     ausencias(est, area, asignatura, tipo) {
-      return Number(est.areas?.[area]?.asignaturas?.[asignatura]?.[tipo]) || 0
+      return est.areas?.[area]?.asignaturas?.[asignatura]?.[tipo] || ''
     },
     ausenciasArea(est, area, tipo) {
       const asigns = Object.keys(est.areas?.[area]?.asignaturas || {})
-      return asigns.reduce((sum, asig) => sum + Number(this.ausencias(est, area, asig, tipo)), 0)
+      return asigns.reduce((sum, asig) => sum + this.ausencias(est, area, asig, tipo), '')
     },
     intensidadHorariaAsignatura(est, area, asignatura) {
       return est.areas?.[area]?.asignaturas?.[asignatura]?.intensidadHoraria || ''
@@ -553,32 +508,9 @@ export default {
       return asigns.reduce((sum, asig) => sum + this.intensidadHorariaAsignatura(est, area, asig), 0)
     },
     notaPeriodo(est, area, asignatura, periodo) {
-      const concep = est.areas?.[area]?.asignaturas?.[asignatura]?.concep
-      if (concep === "S") return ''
       const orden = est.areas?.[area]?.asignaturas?.[asignatura]?.orden
       if (orden == 99 && this.tipoValComp == 0) return est.areas?.[area]?.asignaturas?.[asignatura]?.periodos?.[periodo] || ''
       return est.areas?.[area]?.asignaturas?.[asignatura]?.periodos?.[periodo]?.toFixed(1) || ''
-    },
-    criterio1Periodo(est, area, asignatura, periodo) {
-      const concep = est.areas?.[area]?.asignaturas?.[asignatura]?.concep
-      if (concep === "S") return ''
-      const orden = est.areas?.[area]?.asignaturas?.[asignatura]?.orden
-      if (orden == 99 && this.tipoValComp == 0) return est.areas?.[area]?.asignaturas?.[asignatura]?.c1?.[periodo] || ''
-      return est.areas?.[area]?.asignaturas?.[asignatura]?.c1?.[periodo]?.toFixed(1) || ''
-    },
-    criterio2Periodo(est, area, asignatura, periodo) {
-      const concep = est.areas?.[area]?.asignaturas?.[asignatura]?.concep
-      if (concep === "S") return ''
-      const orden = est.areas?.[area]?.asignaturas?.[asignatura]?.orden
-      if (orden == 99 && this.tipoValComp == 0) return est.areas?.[area]?.asignaturas?.[asignatura]?.c2?.[periodo] || ''
-      return est.areas?.[area]?.asignaturas?.[asignatura]?.c2?.[periodo]?.toFixed(1) || ''
-    },
-    criterio3Periodo(est, area, asignatura, periodo) {
-      const concep = est.areas?.[area]?.asignaturas?.[asignatura]?.concep
-      if (concep === "S") return ''
-      const orden = est.areas?.[area]?.asignaturas?.[asignatura]?.orden
-      if (orden == 99 && this.tipoValComp == 0) return est.areas?.[area]?.asignaturas?.[asignatura]?.c3?.[periodo] || ''
-      return est.areas?.[area]?.asignaturas?.[asignatura]?.c3?.[periodo]?.toFixed(1) || ''
     },
     observacionComportamiento(est) {
       // Busca la asignatura de orden 99
@@ -599,15 +531,11 @@ export default {
           periodo,
           definitiva,
           recuperacion,
-          C1,
-          C2,
-          C3,
           definitivacompor,
           fechaR,
           inclusion,
           observaciones,
           pd,
-          concep,
           ausJ,
           ausS
         } = nota
@@ -633,20 +561,13 @@ export default {
             periodos: {},
             definitivas: {},
             recuperaciones: {},
-            c1: {},
-            c2: {},
-            c3: {},
             definitiva: null,
             recuperacion: null,
-            C1: null,
-            C2: null,
-            C3: null,
             definitivacompor: null,
             fechaR: null,
             inclusion: null,
             observaciones: null,
             pd: null,
-            concep: null,
             ausJ: 0,
             ausS: 0
           }
@@ -656,30 +577,22 @@ export default {
           asig.periodos[periodo] = definitivacompor
           asig.definitivas[periodo] = definitivacompor
           asig.recuperaciones[periodo] = ''
-          asig.c1[periodo] = ''
-          asig.c2[periodo] = ''
-          asig.c3[periodo] = ''
           asig.definitiva = definitivacompor
           asig.recuperacion = ''
           asig.fechaR = fechaR
           asig.inclusion = inclusion
           asig.observaciones = observaciones
           asig.pd = pd
-          asig.concep = concep
         } else {
           asig.periodos[periodo] = recuperacion > definitiva ? recuperacion : definitiva
           asig.definitivas[periodo] = definitiva
           asig.recuperaciones[periodo] = recuperacion
-          asig.c1[periodo] = C1
-          asig.c2[periodo] = C2
-          asig.c3[periodo] = C3
           asig.definitiva = definitiva
           asig.recuperacion = recuperacion
           asig.fechaR = fechaR
           asig.inclusion = inclusion
           asig.observaciones = observaciones
           asig.pd = pd
-          asig.concep = concep
         }
         asig.ausJ += ausJ || 0
         asig.ausS += ausS || 0
@@ -701,10 +614,9 @@ export default {
     }
   },
   beforeMount() {
-    this.escudo = "https://siedutunja.gov.co/api/colegios/escudos/" + this.$store.state.escudoInstitucion
+    this.escudo = "https://siedutunja.gov.co/api/colegios/escudos/" + this.escudoIE
     if (this.$store.state.daneInstitucion === '115001002807' || this.$store.state.daneInstitucion === '315001001893' || this.$store.state.daneInstitucion === '115001000430' || this.$store.state.daneInstitucion === '315001001613' || this.$store.state.daneInstitucion === '115001002751' || this.$store.state.daneInstitucion === '115001000367') this.colDesem = 7
     else this.colDesem = 6
-    this.datosSeccion = this.$store.state.datosSecciones[this.$store.state.idSeccion - 1]
   }
 }
 </script>

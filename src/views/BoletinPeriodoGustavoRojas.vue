@@ -42,6 +42,7 @@ export default {
       datosSeccion: {},
       colDesem: 0,
       escala: 0,
+      estConceptual: null,
     }
   },
   methods: {
@@ -89,6 +90,7 @@ export default {
     },
     renderBoletin(estudiante, data) {
       if (!data) return `<p>No hay datos para ${estudiante.nombre}</p>`
+      this.estConceptual = estudiante.id_conceptual
       let cuerpo = `
         <div class="boletin">
           <div class="text-center mt-2">
@@ -154,8 +156,8 @@ export default {
           <table class="tabla-boletin">
             <thead>
               <tr>
-                <th style="width:20%; text-align: left">Promedio: <strong>${this.calcularPromedioGeneralPorAreasFinales(data)}</strong></th>
-                <th style="width:20%; text-align: left">Puesto: <strong>${this.puestoEstudiante(estudiante.nombre)}</strong></th>
+                <th style="width:20%; text-align: left">Promedio: <strong>${this.estConceptual == 'N' ? this.calcularPromedioGeneralPorAreasFinales(data) : ''}</strong></th>
+                <th style="width:20%; text-align: left">Puesto: <strong>${this.estConceptual == 'N' ? this.puestoEstudiante(estudiante.nombre) : ''}</strong></th>
                 <th style="width:20%; text-align: left">Aus.Justificadas: <strong>${this.estudiantesNotas[estudiante.nombre].ausJ}</strong></th>
                 <th style="width:20%; text-align: left">Aus.SinJustificar: <strong>${this.estudiantesNotas[estudiante.nombre].ausS}</strong></th>
               </tr>
@@ -216,7 +218,7 @@ export default {
                 <td>${ausJAsig}</td>
                 <td>${ausSAsig}</td>
               </tr>
-              <tr><td colspan="11" class="descriptor" style="text-align: left">${this.descriptorAsignatura(data, area, a, this.periodoActual,this.orden)}</td></tr>
+              <tr><td colspan="${this.colDesem + 6}" class="descriptor" style="text-align: left">${this.descriptorAsignatura(data, area, a, this.periodoActual,this.orden)}</td></tr>
             `
           } else {
             return `
@@ -350,13 +352,6 @@ export default {
       return ''
     },
     notaFinalArea(est, area) {
-      /*
-      const asignsx = Object.keys(est.areas?.[area]?.asignaturas || {})
-      if (!asignsx.length) return ''
-      const orden = est.areas?.[area]?.asignaturas?.[asignsx]?.orden
-      const asignatura = asignsx.reduce((asig) => asig)
-      if (orden == 99 && this.tipoValComp == 1) return this.promedioAreaPorPeriodo(est, area, this.periodoActual) //this.promedioAsignatura(est, area, asignatura)
-*/
       let asigns = ''
       if (this.promCompor == 1) { // Promedia comportamiento
         asigns = this.listaAreasAsignaturas.filter(a => a.area === area && a.orden !== 98)
@@ -528,7 +523,7 @@ export default {
       const asigns = Object.keys(est.areas?.[area]?.asignaturas || {})
       if (!asigns.length) return ''
       const concep = est.areas?.[area]?.asignaturas?.[asigns]?.concep
-      if (concep === "S") return ''
+      if (this.estConceptual === "S") return ''
       const orden = est.areas?.[area]?.asignaturas?.[asigns]?.orden
       if (orden == 99 && this.tipoValComp == 0) return est.areas?.[area]?.asignaturas?.[asigns]?.periodos?.[periodo] || ''
       const total = asigns.reduce((sum, asig) => {

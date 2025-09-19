@@ -25,15 +25,17 @@
               </CCardFooter>
             </CCard>
             <b-row class="mt-5">
-              <b-col lg="6">
-                <h2>Consulta de Informe de Evaluación</h2>
+              <b-col lg="12">
+                <h2>Consulta de Estudiante</h2>
+                <hr>
               </b-col>
-              <b-col lg="6">
-                <h2>Periodo: SEGUNDO</h2>
+              <b-col lg="12">
+                <b-form-group label="Seleccione la Institución Educativa:" label-for="ie" class="etiqueta">
+                  <b-form-select id="ie" ref="ie" v-model="idInstitucion" :options="comboInstituciones" @change="buscarTexto.textoBusqueda=null,encontrado=false,configuracionIE()"></b-form-select>
+                </b-form-group>
               </b-col>
             </b-row>
-            <b-row><b-col><hr></b-col></b-row>
-            <b-row>
+            <b-row v-if="fechaConsulta">
               <b-col lg="6" md="6">
                 <b-form-group label="Número de Documento del Estudiante*" label-for="texto" class="etiqueta">
                   <b-form-input id="texto" ref="texto" v-model.trim="$v.buscarTexto.textoBusqueda.$model" :state="validateStateT('textoBusqueda')" aria-describedby="feedTextoB" autocomplete="off" maxlength="50" v-on:keyup.enter="buscarEstudiante()" autofocus></b-form-input>
@@ -48,81 +50,77 @@
                 <b-button class="small mt-1" variant="primary" @click="buscarEstudiante()">Consultar Estudiante</b-button>
               </b-col>
             </b-row>
-            <b-row><b-col><hr></b-col></b-row>
-            <b-row v-if="encontrado">
-              <b-col>
-                <p>Estudiante: <br><b>{{datosEstudiante.nombre}}</b></p>
-                <p>Documento: <br><b>{{datosEstudiante.documento}}</b></p>
-                <p>Grado-Curso: <br><b>{{datosEstudiante.curso}}</b></p>
-                <p>Jornada: <br><b>{{datosEstudiante.jornada}}</b></p>
-                <p>Sede: <br><b>{{datosEstudiante.sede}}</b></p>
-                <b-button class="small mt-1" variant="success" @click="imprimirReportes()">Consultar Informe de Evaluación</b-button>
+            <b-row v-else>
+              <b-col lg="12">
+                <b-alert v-if="idInstitucion != null" variant="danger" show><b>Lo sentimos!. El periodo de consulta se encuentra cerrado.</b><br>Por favor intente mas tarde hacer la consulta o comuniquese con su Institución Educativa.</b-alert>
               </b-col>
             </b-row>
-
+            <div v-if="encontrado">
+              <b-row><b-col><hr></b-col></b-row>
+              <b-row>
+                <b-col>
+                  <p>Estudiante: <br><b>{{datosEstudiante.nombre}}</b></p>
+                  <p>Documento: <br><b>{{datosEstudiante.documento}}</b></p>
+                  <p>Grado-Curso: <br><b>{{datosEstudiante.curso}}</b></p>
+                  <p>Jornada: <br><b>{{datosEstudiante.jornada}}</b></p>
+                  <p>Sede: <br><b>{{datosEstudiante.sede}}</b></p>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col lg="4" v-if="consultaBoletin == 1">
+                  <b-button class="small mt-1" variant="success" @click="imprimirReportes()">Consultar Informe de Evaluación</b-button>
+                </b-col>
+              </b-row>
+            </div>
           </CCardBody>
         </CCard>
       </CCol>
     </CRow>
-
-    <div v-if="idNivel == 1">
-      <BoletinPree
-        v-if="mostrarBoletines"
-        :estudiantesSeleccionados="estudiantesSeleccionados"
-        :listaAreasAsignaturas="listaAreasAsignaturas"
-        :listaDescriptores="listaDescriptores"
-        :notas="notas"
-        :datosEstudiantes="datosEstudiantes"
-        :anio="2025"
-        :periodoActual="idPeriodo"
-        :periodosVisibles="periodosVisibles"
-        :nombreSede="nombreSede"
-        :nombreCurso="nombreCurso"
-        :nombrePeriodo="nombrePeriodo"
-        :nombreJornada="nombreJornada"
-        :nombreDirector="nombreDirector"
-        :idNivel="idNivel"
-        :umbralesA="umbralesA"
-        :umbralesT="umbralesT"
-        :pesosPeriodos="pesosPeriodos"
-        :tipoValComp="tipoValComp"
-        :directorCurso="nombreDirector"
-        :coordinador="coordinador"
-        :promCompor="promCompor"
-        :escalaPreescolar="escalaPreescolar"
-        :nuevaEscalaPreescolar="nuevaEscalaPreescolar"
-        :escudoIE="escudoIE"
-        :nombreIE="nombreIE"
-      />
-    </div>
-    <div v-else>
-      <BoletinPeriodo
-        v-if="mostrarBoletines"
-        :estudiantesSeleccionados="estudiantesSeleccionados"
-        :listaAreasAsignaturas="listaAreasAsignaturas"
-        :listaDescriptores="listaDescriptores"
-        :notas="notas"
-        :datosEstudiantes="datosEstudiantes"
-        :anio="2025"
-        :periodoActual="idPeriodo"
-        :periodosVisibles="periodosVisibles"
-        :nombreSede="nombreSede"
-        :nombreCurso="nombreCurso"
-        :nombrePeriodo="nombrePeriodo"
-        :nombreJornada="nombreJornada"
-        :nombreDirector="nombreDirector"
-        :idNivel="idNivel"
-        :umbralesA="umbralesA"
-        :umbralesT="umbralesT"
-        :pesosPeriodos="pesosPeriodos"
-        :tipoValComp="tipoValComp"
-        :promCompor="promCompor"
-        :letrasCompor="letrasCompor"
-        :directorCurso="nombreDirector"
-        :coordinador="coordinador"
-        :escudoIE="escudoIE"
-        :nombreIE="nombreIE"
-      />
+    <div v-if="encontrado">
+      <div v-if="idNivel == 1">
+        <BoletinPree
+          v-if="mostrarBoletines"
+          :estudiantesSeleccionados="estudiantesSeleccionados"
+          :listaAreasAsignaturas="listaAreasAsignaturas"
+          :listaDescriptores="listaDescriptores"
+          :notas="notas"
+          :datosEstudiantes="datosEstudiantes"
+          :anio="Number(aLectivo)"
+          :periodoActual="idPeriodo"
+          :periodosVisibles="periodosVisibles"
+          :nombreSede="nombreSede"
+          :nombreCurso="nombreCurso"
+          :nombrePeriodo="nombrePeriodo"
+          :nombreJornada="nombreJornada"
+          :nombreDirector="nombreDirector"
+          :idNivel="idNivel"
+          :umbralesA="umbralesA"
+          :umbralesT="umbralesT"
+          :pesosPeriodos="pesosPeriodos"
+          :tipoValComp="tipoValComp"
+          :directorCurso="nombreDirector"
+          :coordinador="coordinador"
+          :promCompor="promCompor"
+          :escalaPreescolar="escalaPreescolar"
+          :nuevaEscalaPreescolar="nuevaEscalaPreescolar"
+          :escudoIE="escudoIE"
+          :nombreIE="nombreIE"
+        />
+      </div>
+      <div v-else>
+        <span v-if="idInstitucion == 'eb58bf60-fc83-11ec-a1d1-1dc2835404e5'"> <!-- INEM -->
+          <BoletinPeriodoInem v-if="mostrarBoletines" :estudiantesSeleccionados="estudiantesSeleccionados" :listaAreasAsignaturas="listaAreasAsignaturas" :listaDescriptores="listaDescriptores" :notas="notas" :datosEstudiantes="datosEstudiantes" :anio="Number(aLectivo)" :periodoActual="idPeriodo" :periodosVisibles="periodosVisibles" :nombreSede="nombreSede" :nombreCurso="nombreCurso" :nombrePeriodo="nombrePeriodo" :nombreJornada="nombreJornada" :nombreDirector="nombreDirector" :idNivel="idNivel" :umbralesA="umbralesA" :umbralesT="umbralesT" :pesosPeriodos="pesosPeriodos" :tipoValComp="tipoValComp" :promCompor="promCompor" :letrasCompor="letrasCompor" :firmasBoletin="firmasBoletin" :descC1="descC1" :descC2="descC2" :descC3="descC3" :idGrado="idGrado" />
+        </span>
+        <span v-if="idInstitucion == '660fa760-fc83-11ec-a1d1-1dc2835404e5'"> <!-- GRANCOLOMBIANO -->
+          <BoletinPeriodoGranColombiano v-if="mostrarBoletines" :estudiantesSeleccionados="estudiantesSeleccionados" :listaAreasAsignaturas="listaAreasAsignaturas" :listaDescriptores="listaDescriptores" :notas="notas" :datosEstudiantes="datosEstudiantes" :anio="Number(aLectivo)" :periodoActual="idPeriodo" :periodosVisibles="periodosVisibles" :nombreSede="nombreSede" :nombreCurso="nombreCurso" :nombrePeriodo="nombrePeriodo" :nombreJornada="nombreJornada" :nombreDirector="nombreDirector" :idNivel="idNivel" :umbralesA="umbralesA" :umbralesT="umbralesT" :pesosPeriodos="pesosPeriodos" :tipoValComp="tipoValComp" :promCompor="promCompor" :letrasCompor="letrasCompor" :firmasBoletin="firmasBoletin" :descC1="descC1" :descC2="descC2" :descC3="descC3" :idGrado="idGrado" />
+        </span>
+        <span v-if="idInstitucion == 'f5529ba0-fcb3-11ec-8267-536b07c743c4'"> <!-- GUSTAVOROJAS -->
+          <BoletinPeriodoGustavoRojas v-if="mostrarBoletines" :estudiantesSeleccionados="estudiantesSeleccionados" :listaAreasAsignaturas="listaAreasAsignaturas" :listaDescriptores="listaDescriptores" :notas="notas" :datosEstudiantes="datosEstudiantes" :anio="Number(aLectivo)" :periodoActual="idPeriodo" :periodosVisibles="periodosVisibles" :nombreSede="nombreSede" :nombreCurso="nombreCurso" :nombrePeriodo="nombrePeriodo" :nombreJornada="nombreJornada" :nombreDirector="nombreDirector" :idNivel="idNivel" :umbralesA="umbralesA" :umbralesT="umbralesT" :pesosPeriodos="pesosPeriodos" :tipoValComp="tipoValComp" :promCompor="promCompor" :letrasCompor="letrasCompor" :firmasBoletin="firmasBoletin" :descC1="descC1" :descC2="descC2" :descC3="descC3" :idGrado="idGrado" />
+        </span>
+        <span v-else>
+          <BoletinPeriodo v-if="mostrarBoletines" :estudiantesSeleccionados="estudiantesSeleccionados" :listaAreasAsignaturas="listaAreasAsignaturas" :listaDescriptores="listaDescriptores" :notas="notas" :datosEstudiantes="datosEstudiantes" :anio="Number(aLectivo)" :periodoActual="idPeriodo" :periodosVisibles="periodosVisibles" :nombreSede="nombreSede" :nombreCurso="nombreCurso" :nombrePeriodo="nombrePeriodo" :nombreJornada="nombreJornada" :nombreDirector="nombreDirector" :idNivel="idNivel" :umbralesA="umbralesA" :umbralesT="umbralesT" :pesosPeriodos="pesosPeriodos" :tipoValComp="tipoValComp" :promCompor="promCompor" :letrasCompor="letrasCompor" :firmasBoletin="firmasBoletin" :descC1="descC1" :descC2="descC2" :descC3="descC3" />
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -132,18 +130,27 @@
   import * as CONFIG from '@/assets/config.js'
   import { validationMixin } from "vuelidate";
   import { required, minLength } from "vuelidate/lib/validators";
-  import BoletinPeriodo from '@/views//BoletinPeriodo'
+  import BoletinPeriodo from '@/views/BoletinPeriodo'
+  import BoletinPeriodoInem from '@/views/BoletinPeriodoInem'
+  import BoletinPeriodoGranColombiano from '@/views/BoletinPeriodoGranColombiano'
+  import BoletinPeriodoGustavoRojas from '@/views/BoletinPeriodoGustavoRojas'
   import BoletinPree from '@/views/BoletinPree'
 
   export default {
     name: 'Inicio',
     mixins: [validationMixin],
     components: {
+      BoletinPeriodoInem,
+      BoletinPeriodoGranColombiano,
+      BoletinPeriodoGustavoRojas,
       BoletinPeriodo,
       BoletinPree
     },
     data () {
       return {
+        idInstitucion: null,
+        comboInstituciones: [],
+        listaInstituciones: [],
         idBoletin: null,
         idSede: null,
         comboSedes: [],
@@ -154,10 +161,12 @@
         nombreSede: null,
         nombreCurso: null,
         nombrePeriodo: null,
+        periodos: ['','PRIMERO','SEGUNDO','TERCERO','CUARTO'],
         nombreJornada: null,
         nombreDirector: null,
         coordinador: null,
         idNivel: null,
+        idGrado: null,
         btnCargando: false,
         datosSeccion: {},
         estudiantesSeleccionados: [],
@@ -176,7 +185,13 @@
         escalaPreescolar: {},
         nuevaEscalaPreescolar: [],
         letrasCompor: [],
-
+        descC1: null,
+        descC2: null,
+        descC3: null,
+        fechaConsulta: false,
+        actualizarFicha: 0,
+        consultaBoletin: 0,
+        consultaObservador: 0,
         listaReportes: [],
         datosEstudiante: {},
         buscarTexto: {
@@ -187,6 +202,7 @@
         encontrado: false,
         escudoIE: '',
         nombreIE: '',
+        firmasBoletin: ''
       }
     },
     validations: {
@@ -228,9 +244,11 @@
             {letra: this.datosEstudiante.preeL3, umbral: this.datosEstudiante.minAlt, desempeno: this.datosEstudiante.preeC3},
             {letra: this.datosEstudiante.preeL4, umbral: this.datosEstudiante.maxSup, desempeno: this.datosEstudiante.preeC4},
           ]
+          this.descC1 = this.datosEstudiante.nombreC1 != '' && this.datosEstudiante.nombreC1 != null ? this.datosEstudiante.nombreC1.substr(0,3) : 'C1'
+          this.descC2 = this.datosEstudiante.nombreC2 != '' && this.datosEstudiante.nombreC2 != null ? this.datosEstudiante.nombreC2.substr(0,3) : 'C2'
+          this.descC3 = this.datosEstudiante.nombreC3 != '' && this.datosEstudiante.nombreC3 != null ? this.datosEstudiante.nombreC3.substr(0,3) : 'C3'
           this.letrasCompor = [this.datosEstudiante.compL1,this.datosEstudiante.compL2,this.datosEstudiante.compL3,this.datosEstudiante.compL4]
-          //console.log(this.estudiantesSeleccionados)
-          // this.firma2 =  Asignar la firma que va en el boletin
+          this.firmasBoletin = ''
           setTimeout(()=>{
             this.btnCargando = false
           },500)
@@ -248,7 +266,7 @@
           }
           this.nombreSede = this.datosEstudiante.sede
           this.nombreCurso = this.datosEstudiante.curso
-          this.nombrePeriodo = "SEGUNDO"
+          this.nombrePeriodo = this.periodos[this.idPeriodo]
           this.datosEstudiantes = []
           await axios
           .get(CONFIG.ROOT_PATH + 'boletines/listacurso/boletines', { params: { idCurso: this.idCurso }})
@@ -259,7 +277,6 @@
             } else{
               if (response.data.datos != 0) {
                 this.datosEstudiantes = response.data.datos
-                //console.log(JSON.stringify(this.datosEstudiantes))
                 if (this.idNivel !== 99 ) {
                   this.consultarNotas()
                   this.consultarAreasAsignaturas()
@@ -336,6 +353,60 @@
           this.btnCargando = false
         })
       },
+      configuracionIE() {
+        this.fechaConsulta = false
+        if (this.idInstitucion != null) {
+          this.listaInstituciones.forEach(element => {
+            if (element.idInstitucion == this.idInstitucion) {
+              this.idPeriodo = element.periodo_consulta
+              this.aLectivo = element.aLectivo
+              this.fechaIniConsulta = element.fechaIniConsulta
+              this.fechaFinConsulta = element.fechaFinConsulta
+              this.actualizarFicha = element.actualizarFicha
+              this.consultaBoletin = element.consultaBoletin
+              this.consultaObservador = element.consultaObservador
+              this.$store.commit('set', ['nombreInstitucion', element.institucion])
+              this.$store.commit('set', ['escudoInstitucion', element.escudo])
+              this.$store.commit('set', ['daneInstitucion', element.dane])
+              this.$store.commit('set', ['idSeccion', 1])
+              const fechaHoy = new Date()
+              const fechaIni = new Date(this.fechaIniConsulta)
+              const fechaFin = new Date(this.fechaFinConsulta)
+              //console.log('Hoy' + fechaHoy.getTime())
+              //console.log('Ini' + fechaIni.getTime())
+              //console.log('Fin' + fechaFin.getTime())
+              if((fechaHoy > fechaIni && fechaHoy < fechaFin) ? 1 : 0) {
+                this.fechaConsulta = true
+              }
+            }
+          })
+        }
+      },
+      async consultarInstituciones() {
+        this.btnCargando = true
+        this.listaInstituciones = []
+        this.comboInstituciones = []
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/lista/instituciones/acudiente')
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Lista instituciones')
+            this.btnCargando = false
+          } else{
+            if (response.data.datos != 0) {
+              this.listaInstituciones = response.data.datos
+              this.listaInstituciones.forEach(element => {
+                this.comboInstituciones.push({ 'value': element.idInstitucion, 'text': element.institucion.toUpperCase() })
+              })
+              //console.log(JSON.stringify(this.listaInstituciones))
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Lista instituciones. Intente más tarde.' + err)
+          this.btnCargando = false
+        })
+      },
       async buscarEstudiante() {
         this.datosEstudiante = {}
         this.encontrado = false
@@ -346,7 +417,7 @@
           return false
         } else {
           await axios
-          .get(CONFIG.ROOT_PATH + 'academico/buscarestudiante/documento/reporte', { params: { texto: this.buscarTexto.textoBusqueda }})
+          .get(CONFIG.ROOT_PATH + 'academico/buscarestudiante/documento/reporte', { params: { texto: this.buscarTexto.textoBusqueda, idInstitucion: this.idInstitucion }})
           .then(response => {
             if (response.data.error){
               this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consultar estudiante')
@@ -358,9 +429,19 @@
                 this.escudoIE = this.datosEstudiante.escudo
                 this.nombreIE = this.datosEstudiante.institucion
                 this.consultarEstudiantes()
+                this.$store.commit('set', ['datosSecciones', [{
+                  minBaj: this.datosEstudiante.minBaj,
+                  maxBaj: this.datosEstudiante.maxBaj,
+                  minBas: this.datosEstudiante.minBas,
+                  maxBas: this.datosEstudiante.maxBas,
+                  minAlt: this.datosEstudiante.minAlt,
+                  maxAlt: this.datosEstudiante.maxAlt,
+                  minSup: this.datosEstudiante.minSup,
+                  maxSup: this.datosEstudiante.maxSup
+                }]])
                 //console.log(JSON.stringify(this.datosEstudiante))
               } else {
-                this.mensajeEmergente('info',CONFIG.TITULO_MSG,'No se encontraron datos en la consulta.')
+                this.mensajeEmergente('info',CONFIG.TITULO_MSG,'El estudiante no se encuentra matriculado en la Institución Educativa.')
               }
             }
           })
@@ -382,7 +463,7 @@
       //this.escudoInstitucion = CONFIG.ROOT_ESCUDOS + this.$store.state.escudoInstitucion
       this.secretaria = CONFIG.SECRETARIA
       this.alcaldia = CONFIG.ALCALDIA
-      this.idPeriodo = 2
+      this.consultarInstituciones()
     }
   }
 </script>

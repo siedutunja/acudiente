@@ -440,7 +440,7 @@ export default {
       const nota = est.areas?.[area]?.asignaturas?.[asignatura]?.definitivas?.[periodo]
       if (orden == 99 && this.tipoValComp == 0) {
         this.escala = this.letrasCompor.findIndex(valor => valor === nota)
-        if (this.escala == 1) this.escala = 3
+        if (this.escala == 1) this.escala = 3.5
         else if (this.escala == 2) this.escala = 4
         else if (this.escala == 3) this.escala = 5
         else this.escala = 2
@@ -701,9 +701,9 @@ export default {
     }
   },
   beforeMount() {
+    this.letrasCompor = ['J','B','A','S'] //Aqui van las letrs del comportamiento
     this.escudo = "https://siedutunja.gov.co/api/colegios/escudos/" + this.$store.state.escudoInstitucion
-    if (this.$store.state.daneInstitucion === '115001002807' || this.$store.state.daneInstitucion === '315001001893' || this.$store.state.daneInstitucion === '115001000430' || this.$store.state.daneInstitucion === '315001001613' || this.$store.state.daneInstitucion === '115001002751' || this.$store.state.daneInstitucion === '115001000367') this.colDesem = 7
-    else this.colDesem = 6
+    this.colDesem = 6
     this.datosSeccion = this.$store.state.datosSecciones[this.$store.state.idSeccion - 1]
   }
 }

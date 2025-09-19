@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn btn-success float-right btn-block" @click="generarPDF">📄 {{ estudiantesSeleccionados.length }} boletines procesados... Imprimir Boletines o Generar Boletines en PDF</button>
+    <button class="btn btn-success float-right btn-block" @click="generarPDF">📄 {{ estudiantesSeleccionados.length }} boletines procesados... Imprimir Boletines o Generar Boletines en PDF - {{idGrado}}</button>
   </div>
 </template>
 
@@ -32,6 +32,7 @@ export default {
     descC1: String,
     descC2: String,
     descC3: String,
+    idGrado: String,
   },
   data () {
     return {
@@ -187,20 +188,40 @@ export default {
           this.asignatur = a
           const nombreAsignatura = asig.nombreAsignatura
           const ih = this.orden !== 98 ? asig.ih : ''
-          const notas = this.periodosVisibles.map(p => `<td>${this.orden !== 98 ? this.notaPeriodo(data, area, a, p) : ''}</td>`).join('')
-          const c1 = this.orden == 98 ? '' : this.criterio1Periodo(data, area, a, this.periodoActual) > 0 ? this.criterio1Periodo(data, area, a, this.periodoActual) : ''
-          const c2 = this.orden == 98 ? '' : this.criterio2Periodo(data, area, a, this.periodoActual) > 0 ? this.criterio2Periodo(data, area, a, this.periodoActual) : ''
-          const c3 = this.orden == 98 ? '' : this.criterio3Periodo(data, area, a, this.periodoActual) > 0 ? this.criterio3Periodo(data, area, a, this.periodoActual) : ''
-          const prom = this.orden !== 98 ? this.promedioAsignatura(data, area, a) : ''
-          const def = this.orden !== 98 ? this.definitivaPeriodo(data, area, a, this.periodoActual) : ''
-          const rec = this.orden !== 98 ? this.recuperacion(data, area, a, this.periodoActual) : ''
-          const final = this.orden !== 98 ? this.notaFinal(data, area, a, this.periodoActual) : ''
+          let final = ''
+          let notas = ''
+          let c1 = ''
+          let c2 = ''
+          let c3 = ''
+          let prom = ''
+          let def = ''
+          let rec = ''
+          if (this.idGrado == '01' || this.idGrado == '02' || this.idGrado == '03') {
+            notas = this.periodosVisibles.map(p => `<td></td>`).join('')
+            c1 = ''
+            c2 = ''
+            c3 = ''
+            prom = ''
+            def = ''
+            rec = ''
+          } else {
+            notas = this.periodosVisibles.map(p => `<td>${this.orden !== 98 ? this.notaPeriodo(data, area, a, p) : ''}</td>`).join('')
+            c1 = this.orden == 98 ? '' : this.criterio1Periodo(data, area, a, this.periodoActual) > 0 ? this.criterio1Periodo(data, area, a, this.periodoActual) : ''
+            c2 = this.orden == 98 ? '' : this.criterio2Periodo(data, area, a, this.periodoActual) > 0 ? this.criterio2Periodo(data, area, a, this.periodoActual) : ''
+            c3 = this.orden == 98 ? '' : this.criterio3Periodo(data, area, a, this.periodoActual) > 0 ? this.criterio3Periodo(data, area, a, this.periodoActual) : ''
+            prom = this.orden !== 98 ? this.promedioAsignatura(data, area, a) : ''
+            def = this.orden !== 98 ? this.definitivaPeriodo(data, area, a, this.periodoActual) : ''
+            rec = this.orden !== 98 ? this.recuperacion(data, area, a, this.periodoActual) : ''
+          }
+          final = this.orden !== 98 ? this.notaFinal(data, area, a, this.periodoActual) : ''
           const des = this.orden !== 98 ? this.desempeno(final, area, a) : '' //this.desempeño(final)
+          if (this.idGrado == '01' || this.idGrado == '02' || this.idGrado == '03') final = ''
           const ausJ = this.ausencias(data, area, a, 'ausJ')
           const ausS = this.ausencias(data, area, a, 'ausS')
           const ausJAsig = this.orden == 98 ? '' : ausJ > 0 ? ausJ : ''
           const ausSAsig = this.orden == 98 ? '' : ausS > 0 ? ausS : ''
           const docente = asig.docente != null ? asig.docente : ''
+          
           if (this.colDesem == 7) {
             return `
               <tr>
@@ -238,10 +259,19 @@ export default {
         }).join('')
         const ausJ = this.ausenciasArea(data, area, 'ausJ')
         const ausS = this.ausenciasArea(data, area, 'ausS')
-        const notasArea = this.periodosVisibles.map(p => `<td>${this.orden !== 98 ? this.promedioAreaPorPeriodo(data, area, p) : ''}</td>`).join('')
-        const promArea = this.orden !== 98 ? this.promedioArea(data, area) : ''
-        const finalArea = this.orden !== 98 && this.orden != 99 ? this.notaFinalArea(data, area) : this.orden === 99 ? this.definitivaPeriodo(data, area, this.asignatur, this.periodoActual) : ''
+        let notasArea = ''
+        let promArea = ''
+        let finalArea = ''
+        if (this.idGrado == '01' || this.idGrado == '02' || this.idGrado == '03') {
+          notasArea = this.periodosVisibles.map(p => `<td></td>`).join('')
+          promArea = ''
+        } else {
+          notasArea = this.periodosVisibles.map(p => `<td>${this.orden !== 98 ? this.promedioAreaPorPeriodo(data, area, p) : ''}</td>`).join('')
+          promArea = this.orden !== 98 ? this.promedioArea(data, area) : ''
+        }
+        finalArea = this.orden !== 98 && this.orden != 99 ? this.notaFinalArea(data, area) : this.orden === 99 ? this.definitivaPeriodo(data, area, this.asignatur, this.periodoActual) : ''
         const desArea = this.orden !== 98 ? this.desempeno(finalArea, area, this.asignatur) : '' //this.desempeño(finalArea)
+        if (this.idGrado == '01' || this.idGrado == '02' || this.idGrado == '03') finalArea = ''
         const ausJArea = this.orden == 98 ? '' : ausJ > 0 ? ausJ : ''
         const ausSArea = this.orden == 98 ? '' : ausS > 0 ? ausS : ''
         const ihArea = this.orden !== 98 ? this.intensidadHorariaArea(data, area) : ''
@@ -333,21 +363,29 @@ export default {
       return descriptorObj?.descriptor || ''
     },
     desempeno(nota, area, asignatura) {
-      const meta = this.listaAreasAsignaturas.find(
-        a => a.area === area && a.asignatura === asignatura
-      )
-      const tipo = meta?.idTipoEspecialidad || 1
-      const valor = parseFloat(nota)
-      if (isNaN(valor)) return ''
-      const umbralBajo = tipo === 2 ? this.umbralesT[0] : this.umbralesA[0]
-      const umbralBasico = tipo === 2 ? this.umbralesT[1] : this.umbralesA[1]
-      const umbralAlto = tipo === 2 ? this.umbralesT[2] : this.umbralesA[2]
-      const umbralSuperior = tipo === 2 ? this.umbralesT[3] : this.umbralesA[3]
-      if (valor < umbralBajo) return 'Bajo'
-      if (valor < umbralBasico) return 'Básico'
-      if (valor < umbralAlto) return 'Alto'
-      if (valor <= umbralSuperior) return 'Superior'
-      return ''
+      if (this.orden == 99) {
+        if (nota == 'I') return 'INSUFICIENTE'
+        if (nota == 'A') return 'ACEPTABLE'
+        if (nota == 'S') return 'SOBRESALIENTE'
+        if (nota == 'E') return 'EXCELENTE'
+        return ''
+      } else {
+        const meta = this.listaAreasAsignaturas.find(
+          a => a.area === area && a.asignatura === asignatura
+        )
+        const tipo = meta?.idTipoEspecialidad || 1
+        const valor = parseFloat(nota)
+        if (isNaN(valor)) return ''
+        const umbralBajo = tipo === 2 ? this.umbralesT[0] : this.umbralesA[0]
+        const umbralBasico = tipo === 2 ? this.umbralesT[1] : this.umbralesA[1]
+        const umbralAlto = tipo === 2 ? this.umbralesT[2] : this.umbralesA[2]
+        const umbralSuperior = tipo === 2 ? this.umbralesT[3] : this.umbralesA[3]
+        if (valor < umbralBajo) return 'Bajo'
+        if (valor < umbralBasico) return 'Básico'
+        if (valor < umbralAlto) return 'Alto'
+        if (valor <= umbralSuperior) return 'Superior'
+        return ''
+      }
     },
     notaFinalArea(est, area) {
       /*
@@ -705,6 +743,7 @@ export default {
     if (this.$store.state.daneInstitucion === '115001002807' || this.$store.state.daneInstitucion === '315001001893' || this.$store.state.daneInstitucion === '115001000430' || this.$store.state.daneInstitucion === '315001001613' || this.$store.state.daneInstitucion === '115001002751' || this.$store.state.daneInstitucion === '115001000367') this.colDesem = 7
     else this.colDesem = 6
     this.datosSeccion = this.$store.state.datosSecciones[this.$store.state.idSeccion - 1]
+    //console.log(JSON.stringify(this.listaAreasAsignaturas))
   }
 }
 </script>
