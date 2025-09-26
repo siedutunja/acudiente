@@ -30,9 +30,11 @@
                 <hr>
               </b-col>
               <b-col lg="12">
-                <b-form-group label="Seleccione la Institución Educativa:" label-for="ie" class="etiqueta">
-                  <b-form-select id="ie" ref="ie" v-model="idInstitucion" :options="comboInstituciones" @change="buscarTexto.textoBusqueda=null,encontrado=false,configuracionIE()"></b-form-select>
-                </b-form-group>
+                <b-alert variant="success" show>
+                  <b-form-group label="Seleccione la Institución Educativa:" label-for="ie" class="etiqueta">
+                    <b-form-select id="ie" ref="ie" v-model="idInstitucion" :options="comboInstituciones" @change="buscarTexto.textoBusqueda=null,encontrado=false,configuracionIE()"></b-form-select>
+                  </b-form-group>
+                </b-alert>
               </b-col>
             </b-row>
             <b-row v-if="fechaConsulta">
@@ -47,7 +49,7 @@
               </b-col>
               <b-col lg="6" md="6">
                 <br>
-                <b-button class="small mt-1" variant="primary" @click="buscarEstudiante()">Consultar Estudiante</b-button>
+                <b-button class="small mt-1" variant="success" @click="buscarEstudiante()">Consultar Estudiante</b-button>
               </b-col>
             </b-row>
             <b-row v-else>
@@ -59,16 +61,65 @@
               <b-row><b-col><hr></b-col></b-row>
               <b-row>
                 <b-col>
-                  <p>Estudiante: <br><b>{{datosEstudiante.nombre}}</b></p>
-                  <p>Documento: <br><b>{{datosEstudiante.documento}}</b></p>
-                  <p>Grado-Curso: <br><b>{{datosEstudiante.curso}}</b></p>
-                  <p>Jornada: <br><b>{{datosEstudiante.jornada}}</b></p>
-                  <p>Sede: <br><b>{{datosEstudiante.sede}}</b></p>
+                  <b-alert variant="secondary" show>
+                    <h2 class="text-center">Estudiante Consultado</h2>
+                    <hr>
+                    <b-row>
+                      <b-col lg="6"><p>Apellidos y Nombres: <br><b><span style="font-size: 16px">{{datosEstudiante.nombre}}</span></b></p></b-col>
+                      <b-col lg="6"><p>Sede: <br><b><span style="font-size: 16px">{{datosEstudiante.sede}}</span></b></p></b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col lg="6"><p>Documento: <br><b><span style="font-size: 16px">{{datosEstudiante.documento}}</span></b></p></b-col>
+                      <b-col lg="6"><p>Grado-Curso: <br><b><span style="font-size: 16px">{{datosEstudiante.curso}}</span></b></p></b-col>
+                    </b-row>
+                  </b-alert>
                 </b-col>
               </b-row>
-              <b-row>
-                <b-col lg="4" v-if="consultaBoletin == 1">
-                  <b-button class="small mt-1" variant="success" @click="imprimirReportes()">Consultar Informe de Evaluación</b-button>
+              <b-row v-if="actualizarFicha == 1 && actFicha == 0">
+                <b-col lg="12" class="mt-3">
+                  <h3>Actualización de Datos del Estudiante</h3>
+                  <p>Para actualizar la información del estudiante es necesario hacer clic en cada una de las fichas y actualizar los datos solicitados.</p>
+                  <ul>
+                    <li>Las fichas que no se han actualizado estarán enmarcadas en color rojo.</li>
+                    <li>Las fichas actualizadas correctamente se enmarcaran en color verde.</li>
+                  </ul>
+                  <p>Una vez que todas las fichas esten en color verde, se visualizará un botón para confirmar y dar por finalizada la actualización de la información. Posteriormente podrá consultar y descargar el boletín de evaluaciones por periodo.</p>
+                </b-col>
+                <b-col lg="3">
+                  <b-alert variant="secondary" class="text-center" show>
+                    <img :src="foto" id="photoA" alt="photo" width="30%"><br><br>
+                    <b-button class="small mt-1" :variant="fichaE ? 'outline-success' : 'outline-danger'" @click="verFichaEstudiante()">Actualizar Ficha del Estudiante</b-button>
+                  </b-alert>
+                </b-col>
+                <b-col lg="3">
+                  <b-alert variant="secondary" class="text-center" show>
+                    <img :src="foto" id="photoA" alt="photo" width="30%"><br><br>
+                    <b-button class="small mt-1" :variant="fichaP ? 'outline-success' : 'outline-danger'" @click="verFichaPapa()">Actualizar Ficha del Papá</b-button>
+                  </b-alert>
+                </b-col>
+                <b-col lg="3">
+                  <b-alert variant="secondary" class="text-center" show>
+                    <img :src="foto" id="photoA" alt="photo" width="30%"><br><br>
+                    <b-button class="small mt-1" :variant="fichaM ? 'outline-success' : 'outline-danger'" @click="verFichaMama()">Actualizar Ficha de la Mamá</b-button>
+                  </b-alert>
+                </b-col>
+                <b-col lg="3">
+                  <b-alert variant="secondary" class="text-center" show>
+                    <img :src="foto" id="photoA" alt="photo" width="30%"><br><br>
+                    <b-button class="small mt-1" :variant="fichaA ? 'outline-success' : 'outline-danger'" @click="verFichaAcudiente()">Actualizar Ficha del Acudiente</b-button>
+                  </b-alert>
+                </b-col>
+                <b-col lg="12" class="text-center mt-3" v-if="fichaE && fichaP && fichaM && fichaA">
+                  <hr>
+                  <b-button class="mt-1" variant="success" @click="finalizarActualizacion()">Dar por finalizada la Actualización de Datos del Estudiante</b-button>
+                </b-col>
+              </b-row>
+              <b-row v-else>
+                <b-col lg="6" v-if="consultaBoletin == 1">
+                  <b-button class="small mt-1" variant="primary" @click="imprimirReportes()">Consultar Boletin de Evaluaciones</b-button>
+                </b-col>
+                <b-col lg="6" v-if="consultaObservador == 1">
+                  <b-button class="small mt-1" variant="primary" @click="consultarObservador">Consultar Observador del Estudiante</b-button>
                 </b-col>
               </b-row>
             </div>
@@ -111,17 +162,48 @@
         <span v-if="idInstitucion == 'eb58bf60-fc83-11ec-a1d1-1dc2835404e5'"> <!-- INEM -->
           <BoletinPeriodoInem v-if="mostrarBoletines" :estudiantesSeleccionados="estudiantesSeleccionados" :listaAreasAsignaturas="listaAreasAsignaturas" :listaDescriptores="listaDescriptores" :notas="notas" :datosEstudiantes="datosEstudiantes" :anio="Number(aLectivo)" :periodoActual="idPeriodo" :periodosVisibles="periodosVisibles" :nombreSede="nombreSede" :nombreCurso="nombreCurso" :nombrePeriodo="nombrePeriodo" :nombreJornada="nombreJornada" :nombreDirector="nombreDirector" :idNivel="idNivel" :umbralesA="umbralesA" :umbralesT="umbralesT" :pesosPeriodos="pesosPeriodos" :tipoValComp="tipoValComp" :promCompor="promCompor" :letrasCompor="letrasCompor" :firmasBoletin="firmasBoletin" :descC1="descC1" :descC2="descC2" :descC3="descC3" :idGrado="idGrado" />
         </span>
-        <span v-if="idInstitucion == '660fa760-fc83-11ec-a1d1-1dc2835404e5'"> <!-- GRANCOLOMBIANO -->
+        <span v-else-if="idInstitucion == '660fa760-fc83-11ec-a1d1-1dc2835404e5'"> <!-- GRANCOLOMBIANO -->
           <BoletinPeriodoGranColombiano v-if="mostrarBoletines" :estudiantesSeleccionados="estudiantesSeleccionados" :listaAreasAsignaturas="listaAreasAsignaturas" :listaDescriptores="listaDescriptores" :notas="notas" :datosEstudiantes="datosEstudiantes" :anio="Number(aLectivo)" :periodoActual="idPeriodo" :periodosVisibles="periodosVisibles" :nombreSede="nombreSede" :nombreCurso="nombreCurso" :nombrePeriodo="nombrePeriodo" :nombreJornada="nombreJornada" :nombreDirector="nombreDirector" :idNivel="idNivel" :umbralesA="umbralesA" :umbralesT="umbralesT" :pesosPeriodos="pesosPeriodos" :tipoValComp="tipoValComp" :promCompor="promCompor" :letrasCompor="letrasCompor" :firmasBoletin="firmasBoletin" :descC1="descC1" :descC2="descC2" :descC3="descC3" :idGrado="idGrado" />
         </span>
-        <span v-if="idInstitucion == 'f5529ba0-fcb3-11ec-8267-536b07c743c4'"> <!-- GUSTAVOROJAS -->
+        <span v-else-if="idInstitucion == 'f5529ba0-fcb3-11ec-8267-536b07c743c4'"> <!-- GUSTAVOROJAS -->
           <BoletinPeriodoGustavoRojas v-if="mostrarBoletines" :estudiantesSeleccionados="estudiantesSeleccionados" :listaAreasAsignaturas="listaAreasAsignaturas" :listaDescriptores="listaDescriptores" :notas="notas" :datosEstudiantes="datosEstudiantes" :anio="Number(aLectivo)" :periodoActual="idPeriodo" :periodosVisibles="periodosVisibles" :nombreSede="nombreSede" :nombreCurso="nombreCurso" :nombrePeriodo="nombrePeriodo" :nombreJornada="nombreJornada" :nombreDirector="nombreDirector" :idNivel="idNivel" :umbralesA="umbralesA" :umbralesT="umbralesT" :pesosPeriodos="pesosPeriodos" :tipoValComp="tipoValComp" :promCompor="promCompor" :letrasCompor="letrasCompor" :firmasBoletin="firmasBoletin" :descC1="descC1" :descC2="descC2" :descC3="descC3" :idGrado="idGrado" />
+        </span>
+        <span v-else-if="idInstitucion == 'bd226a20-fc82-11ec-a1d1-1dc2835404e5'"> <!-- JULIUS -->
+          <BoletinPeriodoJulius v-if="mostrarBoletines" :estudiantesSeleccionados="estudiantesSeleccionados" :listaAreasAsignaturas="listaAreasAsignaturas" :listaDescriptores="listaDescriptores" :notas="notas" :datosEstudiantes="datosEstudiantes" :anio="Number(aLectivo)" :periodoActual="idPeriodo" :periodosVisibles="periodosVisibles" :nombreSede="nombreSede" :nombreCurso="nombreCurso" :nombrePeriodo="nombrePeriodo" :nombreJornada="nombreJornada" :nombreDirector="nombreDirector" :idNivel="idNivel" :umbralesA="umbralesA" :umbralesT="umbralesT" :pesosPeriodos="pesosPeriodos" :tipoValComp="tipoValComp" :promCompor="promCompor" :letrasCompor="letrasCompor" :firmasBoletin="firmasBoletin" :descC1="descC1" :descC2="descC2" :descC3="descC3" :idGrado="idGrado" />
         </span>
         <span v-else>
           <BoletinPeriodo v-if="mostrarBoletines" :estudiantesSeleccionados="estudiantesSeleccionados" :listaAreasAsignaturas="listaAreasAsignaturas" :listaDescriptores="listaDescriptores" :notas="notas" :datosEstudiantes="datosEstudiantes" :anio="Number(aLectivo)" :periodoActual="idPeriodo" :periodosVisibles="periodosVisibles" :nombreSede="nombreSede" :nombreCurso="nombreCurso" :nombrePeriodo="nombrePeriodo" :nombreJornada="nombreJornada" :nombreDirector="nombreDirector" :idNivel="idNivel" :umbralesA="umbralesA" :umbralesT="umbralesT" :pesosPeriodos="pesosPeriodos" :tipoValComp="tipoValComp" :promCompor="promCompor" :letrasCompor="letrasCompor" :firmasBoletin="firmasBoletin" :descC1="descC1" :descC2="descC2" :descC3="descC3" />
         </span>
       </div>
     </div>
+    <b-modal ref="modalFichaEstudiante" size="xl" scrollable hide-footer title="Ficha del Estudiante" ok-only>
+      <div class="mx-3">
+        <div>
+          <FichaEstudiante :datosEstudiante="datosEstudiante" @retorno="datosRecibidosEstudiante"/>
+        </div>
+      </div>
+    </b-modal>
+    <b-modal ref="modalAsociarPapa" size="xl" scrollable hide-footer title="Ficha del Papá" ok-only>
+      <div class="mx-3">
+        <div>
+          <FichaPapa :datosPapa="datosFichaP" @retorno="datosRecibidosPapa"/>
+        </div>
+      </div>
+    </b-modal>
+    <b-modal ref="modalAsociarMama" size="xl" scrollable hide-footer title="Ficha de la Mamá" ok-only>
+      <div class="mx-3">
+        <div>
+          <FichaMama :datosMama="datosFichaM" @retorno="datosRecibidosMama"/>
+        </div>
+      </div>
+    </b-modal>
+    <b-modal ref="modalAsociarAcudiente" size="xl" scrollable hide-footer title="Ficha del Acudiente" ok-only>
+      <div class="mx-3">
+        <div>
+          <FichaAcudiente :datosAcudiente="datosFichaA" @retorno="datosRecibidosAcudiente"/>
+        </div>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -134,7 +216,12 @@
   import BoletinPeriodoInem from '@/views/BoletinPeriodoInem'
   import BoletinPeriodoGranColombiano from '@/views/BoletinPeriodoGranColombiano'
   import BoletinPeriodoGustavoRojas from '@/views/BoletinPeriodoGustavoRojas'
+  import BoletinPeriodoJulius from '@/views/BoletinPeriodoJulius'
   import BoletinPree from '@/views/BoletinPree'
+  import FichaEstudiante from '@/views/FichaEstudiante'
+  import FichaPapa from '@/views/FichaPapa'
+  import FichaMama from '@/views/FichaMama'
+  import FichaAcudiente from '@/views/FichaAcudiente'
 
   export default {
     name: 'Inicio',
@@ -143,8 +230,13 @@
       BoletinPeriodoInem,
       BoletinPeriodoGranColombiano,
       BoletinPeriodoGustavoRojas,
+      BoletinPeriodoJulius,
       BoletinPeriodo,
-      BoletinPree
+      BoletinPree,
+      FichaEstudiante,
+      FichaPapa,
+      FichaMama,
+      FichaAcudiente,
     },
     data () {
       return {
@@ -167,6 +259,7 @@
         coordinador: null,
         idNivel: null,
         idGrado: null,
+        actFicha: 0,
         btnCargando: false,
         datosSeccion: {},
         estudiantesSeleccionados: [],
@@ -194,6 +287,9 @@
         consultaObservador: 0,
         listaReportes: [],
         datosEstudiante: {},
+        datosFichaP: {},
+        datosFichaM: {},
+        datosFichaA: {},
         buscarTexto: {
           textoBusqueda: null,
         },
@@ -202,7 +298,12 @@
         encontrado: false,
         escudoIE: '',
         nombreIE: '',
-        firmasBoletin: ''
+        firmasBoletin: '',
+        fichaE: false,
+        fichaP: false,
+        fichaM: false,
+        fichaA: false,
+        foto: CONFIG.FOTO,
       }
     },
     validations: {
@@ -211,6 +312,78 @@
       }
     },
     methods: {
+      consultarObservador() {
+        this.mensajeEmergente('info','Consultando observador del estudiante...')
+      },
+      async finalizarActualizacion() {
+        this.actFicha = 0
+        const actEstudiante = {idEstudiante: this.datosEstudiante.idEstudiante}
+        await axios
+        .put(CONFIG.ROOT_PATH + 'academico/estudiantes/actualizaciondatos', JSON.stringify(actEstudiante), { headers: {"Content-Type": "application/json; charset=utf-8" }})
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Actualizar Estudiante')
+          } else {
+            this.mensajeEmergente('success',' La actualización de datos del Estudiante se realizó satisfactoriamente.')
+            this.actFicha = 1
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Actualizar Estudiante. Intente más tarde. ' + err)
+        })
+      },
+      verFichaAcudiente() {
+        this.datosFichaA.idEstudiante = this.datosEstudiante.idEstudiante
+        this.datosFichaA.idAcudiente = this.datosEstudiante.id_acudiente
+        this.datosFichaA.idParentesco = this.datosEstudiante.id_parentesco
+        this.$refs['modalAsociarAcudiente'].show()
+      },
+      datosRecibidosAcudiente(retorno) {
+        if(retorno != 0) {
+          this.datosEstudiante.id_acudiente = retorno.idAcudiente
+          this.datosEstudiante.id_parentesco = retorno.idParentesco
+          this.fichaA = true
+          this.mensajeEmergente('success',CONFIG.TITULO_MSG,'Los datos del Acudiente se han actualizado correctamente.')
+        }
+        this.$refs['modalAsociarAcudiente'].hide()
+      },
+      verFichaMama() {
+        this.datosFichaM.idEstudiante = this.datosEstudiante.idEstudiante
+        this.datosFichaM.idMama = this.datosEstudiante.id_mama
+        this.$refs['modalAsociarMama'].show()
+      },
+      datosRecibidosMama(retorno) {
+        if(retorno != 0) {
+          this.datosEstudiante.id_mama = retorno
+          this.fichaM = true
+          this.mensajeEmergente('success',CONFIG.TITULO_MSG,'Los datos de la Mamá se han actualizado correctamente.')
+        }
+        this.$refs['modalAsociarMama'].hide()
+      },
+      verFichaPapa() {
+        this.datosFichaP.idEstudiante = this.datosEstudiante.idEstudiante
+        this.datosFichaP.idPapa = this.datosEstudiante.id_papa
+        this.$refs['modalAsociarPapa'].show()
+      },
+      datosRecibidosPapa(retorno) {
+        if(retorno != 0) {
+          this.datosEstudiante.id_papa = retorno
+          this.fichaP = true
+          this.mensajeEmergente('success',CONFIG.TITULO_MSG,'Los datos del Papá se han actualizado correctamente.')
+        }
+        this.$refs['modalAsociarPapa'].hide()
+      },
+      verFichaEstudiante() {
+        //this.datosEstudiante.idEstudiante = this.datosEstudiante.idEstudiante
+        this.$refs['modalFichaEstudiante'].show()
+      },
+      datosRecibidosEstudiante(retorno) {
+        if(retorno == 1) {
+          this.fichaE = true
+          this.mensajeEmergente('success',CONFIG.TITULO_MSG,'Los datos del Estudiante se han actualizado correctamente.')
+        }
+        this.$refs['modalFichaEstudiante'].hide()
+      },
       async imprimirReportes() {
         this.btnCargando = true
         this.listaReportes = []
@@ -408,6 +581,10 @@
         })
       },
       async buscarEstudiante() {
+        this.fichaE = false
+        this.fichaP = false
+        this.fichaM = false
+        this.fichaA = false
         this.datosEstudiante = {}
         this.encontrado = false
         this.$v.buscarTexto.$touch()
@@ -428,6 +605,7 @@
                 this.idCurso = this.datosEstudiante.idCurso
                 this.escudoIE = this.datosEstudiante.escudo
                 this.nombreIE = this.datosEstudiante.institucion
+                this.actFicha = this.datosEstudiante.actFicha
                 this.consultarEstudiantes()
                 this.$store.commit('set', ['datosSecciones', [{
                   minBaj: this.datosEstudiante.minBaj,

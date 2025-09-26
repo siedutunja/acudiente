@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn btn-success float-right btn-block" @click="generarPDF">📄 {{ estudiantesSeleccionados.length }} boletines procesados... Imprimir Boletines o Generar Boletines en PDF</button>
+    <button class="btn btn-success float-right btn-block" @click="generarPDF">📄 {{ estudiantesSeleccionados.length }} boletines procesados... Imprimir Boletines o Generar Boletines en PDF Julius</button>
   </div>
 </template>
 
@@ -42,7 +42,6 @@ export default {
       datosSeccion: {},
       colDesem: 0,
       escala: 0,
-      estConceptual: null,
     }
   },
   methods: {
@@ -90,7 +89,6 @@ export default {
     },
     renderBoletin(estudiante, data) {
       if (!data) return `<p>No hay datos para ${estudiante.nombre}</p>`
-      this.estConceptual = estudiante.id_conceptual
       let cuerpo = `
         <div class="boletin">
           <div class="text-center mt-2">
@@ -156,8 +154,8 @@ export default {
           <table class="tabla-boletin">
             <thead>
               <tr>
-                <th style="width:20%; text-align: left">Promedio: <strong>${this.estConceptual == 'N' ? this.calcularPromedioGeneralPorAreasFinales(data) : ''}</strong></th>
-                <th style="width:20%; text-align: left">Puesto: <strong>${this.estConceptual == 'N' ? this.puestoEstudiante(estudiante.nombre) : ''}</strong></th>
+                <th style="width:20%; text-align: left">Promedio: <strong>${this.calcularPromedioGeneralPorAreasFinales(data)}</strong></th>
+                <th style="width:20%; text-align: left">Puesto: <strong>${this.puestoEstudiante(estudiante.nombre)}</strong></th>
                 <th style="width:20%; text-align: left">Aus.Justificadas: <strong>${this.estudiantesNotas[estudiante.nombre].ausJ}</strong></th>
                 <th style="width:20%; text-align: left">Aus.SinJustificar: <strong>${this.estudiantesNotas[estudiante.nombre].ausS}</strong></th>
               </tr>
@@ -218,7 +216,7 @@ export default {
                 <td>${ausJAsig}</td>
                 <td>${ausSAsig}</td>
               </tr>
-              <tr><td colspan="${this.colDesem + 6}" class="descriptor" style="text-align: left">${this.descriptorAsignatura(data, area, a, this.periodoActual,this.orden)}</td></tr>
+              <tr><td colspan="13" class="descriptor" style="text-align: left">${this.descriptorAsignatura(data, area, a, this.periodoActual,this.orden)}</td></tr>
             `
           } else {
             return `
@@ -305,7 +303,7 @@ export default {
       )
       if (!datos || !meta) return ''
       // Si la asignatura tiene pd === "S", usamos el campo inclusion directamente
-      if (ordencito != 99 && (datos.pd === 'S' || datos.concep === 'S') ) {
+      if (datos.pd === 'S' || datos.concep === 'S' ) {
         return datos.inclusion || ''
       }
       let notaFinal = 0
@@ -336,8 +334,8 @@ export default {
     },
     desempeno(nota, area, asignatura) {
       if (this.orden == 99) {
-        if (nota == 'I') return 'Insuficiente'
-        if (nota == 'A') return 'Aceptable'
+        if (nota == 'J') return 'Bajo'
+        if (nota == 'B') return 'Básico'
         if (nota == 'S') return 'Sobresaliente'
         if (nota == 'E') return 'Excelente'
         return ''
@@ -360,6 +358,13 @@ export default {
       }
     },
     notaFinalArea(est, area) {
+      /*
+      const asignsx = Object.keys(est.areas?.[area]?.asignaturas || {})
+      if (!asignsx.length) return ''
+      const orden = est.areas?.[area]?.asignaturas?.[asignsx]?.orden
+      const asignatura = asignsx.reduce((asig) => asig)
+      if (orden == 99 && this.tipoValComp == 1) return this.promedioAreaPorPeriodo(est, area, this.periodoActual) //this.promedioAsignatura(est, area, asignatura)
+*/
       let asigns = ''
       if (this.promCompor == 1) { // Promedia comportamiento
         asigns = this.listaAreasAsignaturas.filter(a => a.area === area && a.orden !== 98)
@@ -531,7 +536,7 @@ export default {
       const asigns = Object.keys(est.areas?.[area]?.asignaturas || {})
       if (!asigns.length) return ''
       const concep = est.areas?.[area]?.asignaturas?.[asigns]?.concep
-      if (this.estConceptual === "S") return ''
+      if (concep === "S") return ''
       const orden = est.areas?.[area]?.asignaturas?.[asigns]?.orden
       if (orden == 99 && this.tipoValComp == 0) return est.areas?.[area]?.asignaturas?.[asigns]?.periodos?.[periodo] || ''
       const total = asigns.reduce((sum, asig) => {
