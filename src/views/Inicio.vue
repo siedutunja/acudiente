@@ -390,8 +390,13 @@
         let puesto = ''
         if (this.idNivel == 99) {
           this.listaReportes = []
+          let nomPeriodo = ''
+          if (this.idPeriodo == 1) nomPeriodo = 'PRIMERO'
+          if (this.idPeriodo == 2) nomPeriodo = 'SEGUNDO'
+          if (this.idPeriodo == 3) nomPeriodo = 'TERCERO'
+          if (this.idPeriodo == 4) nomPeriodo = 'CUARTO'
           this.listaReportes.push({ 'id': this.datosEstudiante.idMatricula, 'estudiante': this.datosEstudiante.nombre, 'pue': '', 'pro': '' })
-          let uri = "?datos=" + JSON.stringify(this.listaReportes) + "&ie=" + this.datosEstudiante.institucion + "&vigencia=" + "2025" + "&escudo=" + this.datosEstudiante.escudo + "&sede=" + this.datosEstudiante.sede + "&idCurso=" + this.datosEstudiante.idCurso + "&curso=" + this.datosEstudiante.curso + "&jornada=" + this.datosEstudiante.jornada + "&director=" + this.datosEstudiante.director + "&periodo=" + "SEGUNDO" + "&idPeriodo=" + this.idPeriodo + "&idIe=" + this.datosEstudiante.idInstitucion + "&idNivel=" + this.datosEstudiante.idNivel + "&puesto=" + "" +
+          let uri = "?datos=" + JSON.stringify(this.listaReportes) + "&ie=" + this.datosEstudiante.institucion + "&vigencia=" + "2025" + "&escudo=" + this.datosEstudiante.escudo + "&sede=" + this.datosEstudiante.sede + "&idCurso=" + this.datosEstudiante.idCurso + "&curso=" + this.datosEstudiante.curso + "&jornada=" + this.datosEstudiante.jornada + "&director=" + this.datosEstudiante.director + "&periodo=" + nomPeriodo + "&idPeriodo=" + this.idPeriodo + "&idIe=" + this.datosEstudiante.idInstitucion + "&idNivel=" + this.datosEstudiante.idNivel + "&puesto=" + "" +
           "&minBaj=" + this.datosEstudiante.minBaj + "&maxBaj=" + this.datosEstudiante.maxBaj + "&minBas=" + this.datosEstudiante.minBas + "&maxBas=" + this.datosEstudiante.maxBas + "&minAlt=" + this.datosEstudiante.minAlt + "&maxAlt=" + this.datosEstudiante.maxAlt + "&minSup=" + this.datosEstudiante.minSup + "&maxSup=" + this.datosEstudiante.maxSup
           let encoded = encodeURI(uri);
           //window.open("http://localhost/siedutunja/php/boletines/" + this.datosEstudiante.dane + "as.php" + encoded,"_blank")
