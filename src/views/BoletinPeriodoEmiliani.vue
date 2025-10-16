@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn btn-success float-right btn-block" @click="generarPDF">📄 {{ estudiantesSeleccionados.length }} boletines procesados... Imprimir Boletines o Generar Boletines en PDF</button>
+    <button class="btn btn-success float-right btn-block" @click="generarPDF">📄 {{ estudiantesSeleccionados.length }} boletines procesados... Imprimir Boletines o Generar Boletines en PDF Emiliani</button>
   </div>
 </template>
 
@@ -122,7 +122,7 @@ export default {
               </tr>
               <tr>
                 ${this.periodosVisibles.map(p => `<th>P${p}</th>`).join('')}
-                <th>PR</th>
+                <th>ACUM</th>
         `
         if (this.colDesem == 7) {
           cuerpo += `
@@ -334,10 +334,10 @@ export default {
     },
     desempeno(nota, area, asignatura) {
       if (this.orden == 99) {
-        if (nota == 'J') return 'Bajo'
-        if (nota == 'B') return 'Básico'
-        if (nota == 'S') return 'Sobresaliente'
-        if (nota == 'E') return 'Excelente'
+        if (nota == 'A') return 'Anormativo'
+        if (nota == 'P') return 'Persistente'
+        if (nota == 'E') return 'Empático'
+        if (nota == 'I') return 'Integro'
         return ''
       } else {
         const meta = this.listaAreasAsignaturas.find(
@@ -496,11 +496,13 @@ export default {
         for (const p in asig.periodos) {
           const nota = asig.periodos[p]
           if (typeof nota === 'number') {
-            total += nota
-            cant++
+            //total += nota
+            //cant++
+            total += (nota * this.pesosPeriodos[p-1]) / 100
           }
         }
-        return cant > 0 ? this.redondear(total / cant).toFixed(1) : ''
+        //return cant > 0 ? this.redondear(total / cant).toFixed(1) : ''
+        return total > 0 ? this.redondear(total).toFixed(1) : ''
       }
       /*   PONDERADO PARA EMILIANI
       for (const p in asig.periodos) {
