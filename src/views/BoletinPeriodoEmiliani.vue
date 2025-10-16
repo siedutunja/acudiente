@@ -121,7 +121,7 @@ export default {
                 <th colspan="${this.colDesem}">Desempeño en el Periodo</th>
               </tr>
               <tr>
-                ${this.periodosVisibles.map(p => `<th>P${p}</th>`).join('')}
+                ${this.periodosVisibles.map(p => `<th style="font-size: 8px">P${p}[${this.pesosPeriodos[p-1]}%]</th>`).join('')}
                 <th>ACUM</th>
         `
         if (this.colDesem == 7) {
