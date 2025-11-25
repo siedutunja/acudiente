@@ -452,7 +452,7 @@
           this.nombrePeriodo = this.periodos[this.idPeriodo]
           this.datosEstudiantes = []
           await axios
-          .get(CONFIG.ROOT_PATH + 'boletines/listacurso/boletines', { params: { idCurso: this.idCurso }})
+          .get(CONFIG.ROOT_PATH + 'boletines/listacurso/boletines', { params: { idCurso: this.idCurso, vigencia: this.aLectivo }})
           .then(response => {
             if (response.data.error){
               this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta Lista Curso')
@@ -479,7 +479,7 @@
       async consultarNotas() {
         this.notas = []
         await axios
-        .get(CONFIG.ROOT_PATH + 'boletines/notas/curso/periodo', {params: {idCurso: this.idCurso, periodo: this.idPeriodo}})
+        .get(CONFIG.ROOT_PATH + 'boletines/notas/curso/periodo', {params: {idCurso: this.idCurso, periodo: this.idPeriodo, vigencia: this.aLectivo}})
         .then(response => {
           if (response.data.error){
             this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Notas boletines curso periodo')

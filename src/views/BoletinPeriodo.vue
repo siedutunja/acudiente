@@ -705,6 +705,7 @@ export default {
     if (this.$store.state.daneInstitucion === '115001002807' || this.$store.state.daneInstitucion === '315001001893' || this.$store.state.daneInstitucion === '115001000430' || this.$store.state.daneInstitucion === '315001001613' || this.$store.state.daneInstitucion === '115001002751' || this.$store.state.daneInstitucion === '115001000367') this.colDesem = 7
     else this.colDesem = 6
     this.datosSeccion = this.$store.state.datosSecciones[this.$store.state.idSeccion - 1]
+    console.log(this.datosEstudiantes)
   }
 }
 </script>
