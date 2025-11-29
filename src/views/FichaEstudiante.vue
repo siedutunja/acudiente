@@ -89,6 +89,7 @@
                   <b-form-invalid-feedback id="feedEtnia">Campo requerido.</b-form-invalid-feedback>
                 </b-form-group>
               </b-col>
+              <!--
               <b-col lg="6" md="6">
                 <b-form-group label="Discapacidad*" label-for="discapacidad" class="etiqueta">
                   <b-form-select  id="discapacidad" ref="discapacidad" v-model="$v.infoEstudiante.id_discapacidad.$model" :options="comboDiscapacidades" :state="validateStateD('id_discapacidad')" aria-describedby="feedDiscapacidad"></b-form-select>
@@ -125,6 +126,7 @@
                   <b-form-invalid-feedback id="feedMuniExpulsor">Campo requerido.</b-form-invalid-feedback>
                 </b-form-group>
               </b-col>
+              -->
               <b-col lg="12" md="6">
                 <b-form-group label="Eps*" label-for="eps" class="etiqueta">
                   <b-form-select  id="eps" ref="eps" v-model="$v.infoEstudiante.id_eps.$model" :options="comboEps" :state="validateStateD('id_eps')" aria-describedby="feedEps"></b-form-select>
@@ -286,12 +288,14 @@
         id_genero: { required },
         id_rh: { required },
         id_etnia: { required },
+        /*
         id_discapacidad: { required },
         id_capacidades: { required },
         id_trastorno: { required },
         id_apoyo: { required },
         id_victima: { required },
         id_municipio_expulsor: { required },
+        */
         id_eps: { required },
         id_zona: { required },
         id_estrato: { required },
@@ -431,6 +435,7 @@
         this.$store.state.datosTablas.discapacidades.forEach(element => {
           this.comboDiscapacidades.push({ 'value': element.id, 'text': element.discapacidad.toUpperCase() })
         })
+        /*
         this.comboTrastornos = []
         this.$store.state.datosTablas.trastornos.forEach(element => {
           this.comboTrastornos.push({ 'value': element.id, 'text': element.trastorno.toUpperCase() })
@@ -439,6 +444,7 @@
         this.$store.state.datosTablas.apoyos.forEach(element => {
           this.comboApoyos.push({ 'value': element.id, 'text': element.apoyo.toUpperCase() })
         })
+        */
         this.comboEstratos = []
         this.$store.state.datosTablas.estratos.forEach(element => {
           this.comboEstratos.push({ 'value': element.id, 'text': element.estrato.toUpperCase() })
