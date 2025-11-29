@@ -118,6 +118,9 @@
                 <b-col lg="6" v-if="consultaBoletin == 1">
                   <b-button class="small mt-1" variant="primary" @click="imprimirReportes()">Consultar Boletin de Evaluaciones</b-button>
                 </b-col>
+                <b-col lg="6" v-if="idRepitente == 'N'">
+                  <b-button class="small mt-1" variant="warning" @click="confirmarRenovacion()">Renovación de Matricula {{Number(this.aLectivo) + 1}}</b-button>
+                </b-col>
                 <b-col lg="6" v-if="consultaObservador == 1">
                   <b-button class="small mt-1" variant="primary" @click="consultarObservador">Consultar Observador del Estudiante</b-button>
                 </b-col>
@@ -309,6 +312,7 @@
         fichaM: false,
         fichaA: false,
         foto: CONFIG.FOTO,
+        idRepitente: '',
       }
     },
     validations: {
@@ -317,6 +321,48 @@
       }
     },
     methods: {
+      confirmarRenovacion() {
+        this.$bvModal.msgBoxConfirm('Este proceso permite informar a la Institución Educativa que el estudiante desea continuar sus estudios en la siguiente vigencia. Si desea renovar la matricula podrá descargar el FORMULARIO DE RENOVACIÓN DE MATRICULA y presentarlo en la Institución Educativa cuando lo soliciten. Desea renovar la matricula para el Año Lectivo ' + (Number(this.aLectivo) + 1), {
+          headerBgVariant: 'primary',
+          headerTextVariant: 'light',
+          bodyBgVariant: 'light',
+          bodyBgClass: 'text-center',
+          title: 'Renovación de Matricula ' + (Number(this.aLectivo) + 1),
+          size: '',
+          buttonSize: 'sm',
+          okVariant: 'primary',
+          okTitle: 'Si, Renovar Matricula ' + (Number(this.aLectivo) + 1),
+          cancelVariant: 'danger',
+          cancelTitle: 'Cancelar',
+          bodyClass: 'p-5',
+          footerClass: 'p-2',
+          hideHeaderClose: false,
+          centered: true
+        })
+        .then(value => {
+          if (value) {
+            this.imprimirFormulario()
+          }
+        })
+      },
+      async imprimirFormulario() {
+        const estado = {idMatricula: this.datosEstudiante.idMatricula}
+        await axios
+        .put(CONFIG.ROOT_PATH + 'academico/matriculas/estadorenovacion', JSON.stringify(estado), { headers: {"Content-Type": "application/json; charset=utf-8" }})
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Actualizar Renovacion')
+          } else{
+            this.mensajeEmergente('success',' La renovación del Estudiante se realizó satisfactoriamente.')
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Actualizar Renovacion. Intente más tarde. ' + err)
+        })
+
+        window.open("https://siedutunja.gov.co/php/matriculas/ficharenovacion_02.php?token=" + this.datosEstudiante.idMatricula,"_blank")
+        return true
+      },
       consultarObservador() {
         this.mensajeEmergente('info','Consultando observador del estudiante...')
       },
@@ -616,6 +662,7 @@
                 this.escudoIE = this.datosEstudiante.escudo
                 this.nombreIE = this.datosEstudiante.institucion
                 this.actFicha = this.datosEstudiante.actFicha
+                this.idRepitente = this.datosEstudiante.id_repitente
                 this.consultarEstudiantes()
                 this.$store.commit('set', ['datosSecciones', [{
                   minBaj: this.datosEstudiante.minBaj,
