@@ -373,22 +373,64 @@
             this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Datos Papá. Intente más tarde. ' + err)
         })
       },
-      ocuparCombos() {
-        this.comboGeneros = []
-        this.$store.state.datosTablas.generos.forEach(element => {
-          this.comboGeneros.push({ 'value': element.id, 'text': element.genero.toUpperCase() })
-        })
+      async ocuparCombos() {
+        this.comboGeneros = [{'value': 'F', 'text': 'FEMENINO'}, {'value': 'M', 'text': 'MASCULINO'}]
         this.comboTiposDoc = []
-        this.$store.state.datosTablas.tiposdocumentos.forEach(element => {
-          this.comboTiposDoc.push({ 'value': element.id, 'text': element.tipodocumento.toUpperCase() })
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/tiposdocumentos')
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta datos tiposdocumentos')
+            this.btnCargando = false
+          } else {
+            if(response.data.datos != 0) {
+              response.data.datos.forEach(element => {
+                this.comboTiposDoc.push({ 'value': element.id, 'text': element.tipodocumento.toUpperCase() })
+              })
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Consulta datos tiposdocumentos. Intente más tarde. ' + err)
+          this.btnCargando = false
         })
         this.comboMunicipios = []
-        this.$store.state.datosTablas.municipios.forEach(element => {
-          this.comboMunicipios.push({ 'value': element.id, 'text': element.municipio.toUpperCase() + ' - ' + element.departamento.toUpperCase() })
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/municipios')
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta datos municipios')
+            this.btnCargando = false
+          } else {
+            if(response.data.datos != 0) {
+              response.data.datos.forEach(element => {
+                this.comboMunicipios.push({ 'value': element.id, 'text': element.municipio.toUpperCase() + ' - ' + element.departamento.toUpperCase() })
+              })
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Consulta datos municipios. Intente más tarde. ' + err)
+          this.btnCargando = false
         })
         this.comboPaises = []
-        this.$store.state.datosTablas.paises.forEach(element => {
-          this.comboPaises.push({ 'value': element.id, 'text': element.pais.toUpperCase() })
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/paises') 
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta datos paises')
+            this.btnCargando = false
+          } else {
+            if(response.data.datos != 0) {
+              response.data.datos.forEach(element => {
+                this.comboPaises.push({ 'value': element.id, 'text': element.pais.toUpperCase() })
+              })
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Consulta datos paises. Intente más tarde. ' + err)
+          this.btnCargando = false
         })
       },
       soloLetras(e) {

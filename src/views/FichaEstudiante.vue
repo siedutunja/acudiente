@@ -392,7 +392,7 @@
               if (this.infoEstudiante.fecha_nacimiento != null && this.infoEstudiante.fecha_nacimiento != '') {
                 this.infoEstudiante.fecha_nacimiento = this.infoEstudiante.fecha_nacimiento.substr(0,10)
               }
-              this.habilitaMunicipioExpulsor()
+              //this.habilitaMunicipioExpulsor()
               this.infoEstudiante.idEstudiante = this.datosEstudiante.idEstudiante
             }
           }
@@ -410,19 +410,47 @@
           this.deshabMuniExpulsor = true
         }
       },
-      ocuparCombos() {
-        this.comboZonas = []
-        this.$store.state.datosTablas.zonas.forEach(element => {
-          this.comboZonas.push({ 'value': element.id, 'text': element.zona.toUpperCase() })
-        })
+      async ocuparCombos() {
+        this.comboZonas = [{'value': '1', 'text': 'URBANA'}, {'value': '2', 'text': 'RURAL'}]
         this.comboEps = []
-        this.$store.state.datosTablas.eps.forEach(element => {
-          this.comboEps.push({ 'value': element.id, 'text': element.eps.toUpperCase() })
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/eps')
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta datos eps')
+            this.btnCargando = false
+          } else {
+            if(response.data.datos != 0) {
+              response.data.datos.forEach(element => {
+                this.comboEps.push({ 'value': element.id, 'text': element.eps.toUpperCase() })
+              })
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Consulta datos eps. Intente más tarde. ' + err)
+          this.btnCargando = false
         })
         this.comboEtnias = []
-        this.$store.state.datosTablas.etnias.forEach(element => {
-          this.comboEtnias.push({ 'value': element.id, 'text': element.etnia.toUpperCase() })
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/etnias')
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta datos etnias')
+            this.btnCargando = false
+          } else {
+            if(response.data.datos != 0) {
+              response.data.datos.forEach(element => {
+                this.comboEtnias.push({ 'value': element.id, 'text': element.etnia.toUpperCase() })
+              })
+            }
+          }
         })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Consulta datos etnias. Intente más tarde. ' + err)
+          this.btnCargando = false
+        })
+        /*
         this.comboVictimas = []
         this.$store.state.datosTablas.victimas.forEach(element => {
           this.comboVictimas.push({ 'value': element.id, 'text': element.victima.toUpperCase() })
@@ -435,7 +463,6 @@
         this.$store.state.datosTablas.discapacidades.forEach(element => {
           this.comboDiscapacidades.push({ 'value': element.id, 'text': element.discapacidad.toUpperCase() })
         })
-        /*
         this.comboTrastornos = []
         this.$store.state.datosTablas.trastornos.forEach(element => {
           this.comboTrastornos.push({ 'value': element.id, 'text': element.trastorno.toUpperCase() })
@@ -445,33 +472,84 @@
           this.comboApoyos.push({ 'value': element.id, 'text': element.apoyo.toUpperCase() })
         })
         */
-        this.comboEstratos = []
-        this.$store.state.datosTablas.estratos.forEach(element => {
-          this.comboEstratos.push({ 'value': element.id, 'text': element.estrato.toUpperCase() })
-        })
+        this.comboEstratos = [{'value': '0', 'text': '0'}, {'value': '1', 'text': '1'}, {'value': '2', 'text': '2'}, {'value': '3', 'text': '3'}, {'value': '4', 'text': '4'}, {'value': '5', 'text': '5'}, {'value': '6', 'text': '6'}, {'value': '7', 'text': '7'}, {'value': '8', 'text': '8'}, {'value': '9', 'text': 'NO ASIGNADO'}]
         this.comboSisben = []
-        this.$store.state.datosTablas.sisben.forEach(element => {
-          this.comboSisben.push({ 'value': element.id, 'text': element.subgrupo.toUpperCase() })
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/sisben')
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta datos sisben')
+            this.btnCargando = false
+          } else {
+            if(response.data.datos != 0) {
+              response.data.datos.forEach(element => {
+                this.comboSisben.push({ 'value': element.id, 'text': element.subgrupo.toUpperCase() })
+              })
+            }
+          }
         })
-        this.comboRhs = []
-        this.$store.state.datosTablas.rhs.forEach(element => {
-          this.comboRhs.push({ 'value': element.id, 'text': element.rh.toUpperCase() })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Consulta datos sisben. Intente más tarde. ' + err)
+          this.btnCargando = false
         })
-        this.comboGeneros = []
-        this.$store.state.datosTablas.generos.forEach(element => {
-          this.comboGeneros.push({ 'value': element.id, 'text': element.genero.toUpperCase() })
-        })
+        this.comboRhs = [{'value': '1', 'text': 'O+'}, {'value': '2', 'text': 'O-'}, {'value': '3', 'text': 'A+'}, {'value': '4', 'text': 'A-'}, {'value': '5', 'text': 'B+'}, {'value': '6', 'text': 'B-'}, {'value': '7', 'text': 'AB+'}, {'value': '8', 'text': 'AB-'}, {'value': '9', 'text': 'NO REPORTA'}]
+        this.comboGeneros = [{'value': 'F', 'text': 'FEMENINO'}, {'value': 'M', 'text': 'MASCULINO'}]
         this.comboTiposDoc = []
-        this.$store.state.datosTablas.tiposdocumentos.forEach(element => {
-          this.comboTiposDoc.push({ 'value': element.id, 'text': element.tipodocumento.toUpperCase() })
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/tiposdocumentos')
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta datos tiposdocumentos')
+            this.btnCargando = false
+          } else {
+            if(response.data.datos != 0) {
+              response.data.datos.forEach(element => {
+                this.comboTiposDoc.push({ 'value': element.id, 'text': element.tipodocumento.toUpperCase() })
+              })
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Consulta datos tiposdocumentos. Intente más tarde. ' + err)
+          this.btnCargando = false
         })
         this.comboMunicipios = []
-        this.$store.state.datosTablas.municipios.forEach(element => {
-          this.comboMunicipios.push({ 'value': element.id, 'text': element.municipio.toUpperCase() + ' - ' + element.departamento.toUpperCase() })
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/municipios')
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta datos municipios')
+            this.btnCargando = false
+          } else {
+            if(response.data.datos != 0) {
+              response.data.datos.forEach(element => {
+                this.comboMunicipios.push({ 'value': element.id, 'text': element.municipio.toUpperCase() + ' - ' + element.departamento.toUpperCase() })
+              })
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Consulta datos municipios. Intente más tarde. ' + err)
+          this.btnCargando = false
         })
         this.comboPaises = []
-        this.$store.state.datosTablas.paises.forEach(element => {
-          this.comboPaises.push({ 'value': element.id, 'text': element.pais.toUpperCase() })
+        await axios
+        .get(CONFIG.ROOT_PATH + 'academico/paises') 
+        .then(response => {
+          if (response.data.error){
+            this.mensajeEmergente('danger',CONFIG.TITULO_MSG,response.data.mensaje + ' - Consulta datos paises')
+            this.btnCargando = false
+          } else {
+            if(response.data.datos != 0) {
+              response.data.datos.forEach(element => {
+                this.comboPaises.push({ 'value': element.id, 'text': element.pais.toUpperCase() })
+              })
+            }
+          }
+        })
+        .catch(err => {
+          this.mensajeEmergente('danger',CONFIG.TITULO_MSG,'Algo salio mal y no se pudo realizar: Consulta datos paises. Intente más tarde. ' + err)
+          this.btnCargando = false
         })
       },
       soloLetras(e) {
